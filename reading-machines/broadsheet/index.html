@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>The Broad Sheet — Writing Viewer</title>
+
+  <!-- Free, “newspaper-ish” type stack -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,350;8..60,450;8..60,600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --paper:#f4f0e6;
+      --ink:#14120f;
+      --muted:#5e5a53;
+      --rule:rgba(20,18,15,.18);
+      --shadow:rgba(0,0,0,.08);
+
+      --headline:"Bitter", "Clarendon", "Rockwell", "Roboto Slab", serif;
+      --body:"Source Serif 4","Iowan Old Style","Palatino Linotype",serif;
+
+      --maxw: 1080px;
+      --colw: 320px;
+      --gap: 34px;
+      --radius: 18px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--ink);
+      font-family:var(--body);
+      background:
+        radial-gradient(1200px 800px at 20% 10%, rgba(255,255,255,.35), transparent 55%),
+        radial-gradient(1000px 700px at 80% 40%, rgba(0,0,0,.05), transparent 55%),
+        var(--paper);
+      line-height:1.55;
+      letter-spacing:.1px;
+    }
+
+    /* Subtle “paper grain” overlay (pure CSS; no images) */
+    body.grain::before{
+      content:"";
+      position:fixed; inset:0;
+      pointer-events:none;
+      opacity:.12;
+      mix-blend-mode:multiply;
+      background:
+        repeating-linear-gradient(0deg, rgba(0,0,0,.035) 0 1px, transparent 1px 3px),
+        repeating-linear-gradient(90deg, rgba(0,0,0,.02) 0 1px, transparent 1px 4px);
+    }
+
+    /* Slight “ink bleed” */
+    body.bleed .ink{
+      text-shadow:
+        0.35px 0 rgba(20,18,15,.25),
+        -0.25px 0 rgba(20,18,15,.15),
+        0 0.35px rgba(20,18,15,.18);
+    }
+
+    header{
+      position:sticky; top:0;
+      z-index:5;
+      backdrop-filter: blur(8px);
+      background: linear-gradient(to bottom, rgba(244,240,230,.9), rgba(244,240,230,.6));
+      border-bottom:1px solid var(--rule);
+    }
+
+    .bar{
+      max-width:var(--maxw);
+      margin:0 auto;
+      padding:14px 16px;
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .brand{
+      display:flex; align-items:baseline; gap:10px;
+      min-width: 240px;
+    }
+    .brand h1{
+      margin:0;
+      font-family:var(--headline);
+      font-weight:700;
+      letter-spacing:.6px;
+      font-size:18px;
+      text-transform:uppercase;
+    }
+    .brand .meta{
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+
+    .controls{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .btn{
+      appearance:none;
+      border:1px solid var(--rule);
+      background:rgba(255,255,255,.28);
+      color:var(--ink);
+      padding:9px 11px;
+      border-radius:999px;
+      font-family:var(--body);
+      font-size:12px;
+      cursor:pointer;
+      box-shadow:0 1px 0 var(--shadow);
+      transition:transform .08s ease, background .12s ease;
+    }
+    .btn:active{transform:translateY(1px)}
+    .btn[aria-pressed="true"]{
+      background:rgba(20,18,15,.08);
+      border-color:rgba(20,18,15,.22);
+    }
+    .btn.danger{border-color:rgba(160,0,0,.25)}
+    .btn.danger:hover{background:rgba(160,0,0,.06)}
+
+    .wrap{
+      max-width:var(--maxw);
+      margin: 18px auto 56px;
+      padding: 0 16px;
+      display:grid;
+      grid-template-columns: 1fr 320px;
+      gap: 22px;
+      align-items:start;
+    }
+
+    .sheet{
+      border:1px solid var(--rule);
+      border-radius:var(--radius);
+      box-shadow: 0 12px 30px rgba(0,0,0,.06);
+      overflow:hidden;
+      background: rgba(255,255,255,.16);
+    }
+
+    .masthead{
+      padding: 22px 22px 10px;
+      border-bottom: 1px solid var(--rule);
+      background: linear-gradient(to bottom, rgba(255,255,255,.22), transparent);
+    }
+    .kicker{
+      display:flex; gap:12px; flex-wrap:wrap;
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.22em;
+      text-transform:uppercase;
+    }
+    .kicker span{border-left:1px solid var(--rule); padding-left:10px}
+    .kicker span:first-child{border-left:none; padding-left:0}
+
+    .title{
+      margin:10px 0 0;
+      font-family:var(--headline);
+      font-size:44px;
+      line-height:1.05;
+      letter-spacing:.2px;
+      text-transform:none;
+    }
+    .deck{
+      margin: 10px 0 0;
+      color: rgba(20,18,15,.78);
+      font-size:16px;
+      max-width: 72ch;
+    }
+
+    .content{
+      padding: 18px 22px 24px;
+    }
+
+    /* Newspaper columns */
+    .article{
+      column-width: var(--colw);
+      column-gap: var(--gap);
+      column-rule: 1px solid var(--rule);
+      text-align: justify;
+      hyphens: auto;
+    }
+    .article p{
+      margin:0 0 14px;
+      break-inside: avoid;
+    }
+    .article h2{
+      font-family:var(--headline);
+      font-size:16px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      margin: 18px 0 10px;
+      break-after: avoid;
+    }
+    .dropcap::first-letter{
+      float:left;
+      font-family:var(--headline);
+      font-weight:700;
+      font-size:52px;
+      line-height:.95;
+      padding: 6px 10px 0 0;
+    }
+
+    /* Sidebar */
+    aside{
+      position:sticky;
+      top:72px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+
+    .panel{
+      border:1px solid var(--rule);
+      border-radius:var(--radius);
+      background:rgba(255,255,255,.16);
+      box-shadow:0 10px 22px rgba(0,0,0,.05);
+      overflow:hidden;
+    }
+    .panel h3{
+      margin:0;
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--rule);
+      font-family:var(--headline);
+      font-size:13px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+    }
+    .panel .inner{padding:12px 14px 14px}
+    .field{
+      display:flex; flex-direction:column; gap:6px;
+      margin-bottom:10px;
+    }
+    label{font-size:11px; color:var(--muted); letter-spacing:.12em; text-transform:uppercase}
+    input, textarea{
+      width:100%;
+      border:1px solid var(--rule);
+      border-radius:12px;
+      padding:10px 11px;
+      background:rgba(255,255,255,.28);
+      color:var(--ink);
+      font-family:var(--body);
+      font-size:13px;
+      outline:none;
+    }
+    textarea{min-height:90px; resize:vertical}
+
+    .small{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.45;
+    }
+
+    .clip{
+      border-top:1px dashed rgba(20,18,15,.25);
+      padding-top:10px;
+      margin-top:10px;
+    }
+    .clipItem{
+      border:1px solid var(--rule);
+      border-radius:14px;
+      background:rgba(255,255,255,.22);
+      padding:10px 10px;
+      margin:10px 0 0;
+      box-shadow:0 1px 0 var(--shadow);
+    }
+    .clipItem .clipMeta{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      font-size:11px;
+      color:var(--muted);
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      margin-bottom:6px;
+    }
+    .clipItem .clipText{font-size:13px; color:rgba(20,18,15,.88)}
+    .row{
+      display:flex; gap:8px; flex-wrap:wrap;
+    }
+    .row .btn{flex:1}
+
+    footer{
+      max-width:var(--maxw);
+      margin:0 auto;
+      padding: 14px 16px;
+      color:var(--muted);
+      font-size:12px;
+      border-top:1px solid var(--rule);
+    }
+
+    @media (max-width: 980px){
+      .wrap{grid-template-columns:1fr}
+      aside{position:relative; top:auto}
+      .title{font-size:38px}
+      .article{column-width: 280px}
+    }
+  </style>
+</head>
+
+<body class="grain bleed">
+  <header>
+    <div class="bar">
+      <div class="brand">
+        <h1 class="ink">The Broad Sheet</h1>
+        <div class="meta ink" id="todayMeta">—</div>
+      </div>
+
+      <div class="controls">
+        <button class="btn ink" id="toggleGrain" aria-pressed="true">Paper Grain</button>
+        <button class="btn ink" id="toggleBleed" aria-pressed="true">Ink Bleed</button>
+        <button class="btn ink" id="toggleCols" aria-pressed="true">Columns</button>
+        <button class="btn ink" id="increaseType">A+</button>
+        <button class="btn ink" id="decreaseType">A−</button>
+        <button class="btn danger ink" id="clearClips">Clear Cuttings</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="sheet">
+      <div class="masthead">
+        <div class="kicker ink">
+          <span id="issueDate">Issue: —</span>
+          <span id="issuePlace">Place: —</span>
+          <span id="issueMood">Mood: —</span>
+        </div>
+
+        <h2 class="title ink" id="titleOut">Thomas Farmers Renew Interest In Cotton</h2>
+        <p class="deck ink" id="deckOut">
+          A newspaper-inspired reading room for your writing—quiet authority, human spark, signal-not-spectacle.
+        </p>
+      </div>
+
+      <div class="content">
+        <div class="article ink" id="articleOut">
+          <p class="dropcap">
+            Paste your writing into the “Article” box on the right. This viewer will set it like a broadsheet:
+            columns, rules, justified text, and that friendly slab-serif headline energy.
+          </p>
+
+          <h2>Orientation</h2>
+          <p>
+            This is built for slow reading. It’s a place where your words feel printed—like they belong to a town,
+            a date, a mood. Trim the noise, keep the signal.
+          </p>
+
+          <h2>Cuttings</h2>
+          <p>
+            Highlight any passage in the article, then press <strong>Save Selection</strong> to clip it into “Cuttings.”
+            Your saved clippings persist in this browser (localStorage) like a drawer of newspaper scraps.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <aside>
+      <div class="panel">
+        <h3 class="ink">Issue Header</h3>
+        <div class="inner">
+          <div class="field">
+            <label for="inTitle">Headline</label>
+            <input id="inTitle" placeholder="Your headline…" value="Thomas Farmers Renew Interest In Cotton" />
+          </div>
+
+          <div class="field">
+            <label for="inDeck">Deck</label>
+            <input id="inDeck" placeholder="Short subhead / deck…" value="A newspaper-inspired reading room for your writing—quiet authority, human spark, signal-not-spectacle." />
+          </div>
+
+          <div class="field">
+            <label for="inDate">Date</label>
+            <input id="inDate" placeholder="Jan 4, 2026" />
+          </div>
+
+          <div class="field">
+            <label for="inPlace">Place</label>
+            <input id="inPlace" placeholder="Nashville / Dalton / Wherever" />
+          </div>
+
+          <div class="field">
+            <label for="inMood">Mood</label>
+            <input id="inMood" placeholder="Radiant heat / Solune / etc." />
+          </div>
+
+          <div class="row">
+            <button class="btn ink" id="applyHeader">Apply</button>
+            <button class="btn ink" id="stampNow">Stamp Now</button>
+          </div>
+
+          <p class="small ink" style="margin:10px 0 0">
+            Tip: “Stamp Now” sets date + a simple mood tag automatically.
+          </p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 class="ink">Article</h3>
+        <div class="inner">
+          <div class="field">
+            <label for="inArticle">Paste text</label>
+            <textarea id="inArticle" placeholder="Paste your writing here…"></textarea>
+          </div>
+
+          <div class="row">
+            <button class="btn ink" id="applyArticle">Set Article</button>
+            <button class="btn ink" id="saveSelection">Save Selection</button>
+          </div>
+
+          <p class="small ink" style="margin:10px 0 0">
+            Highlight text in the article, then “Save Selection.” Works best on desktop.
+          </p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 class="ink">Cuttings</h3>
+        <div class="inner">
+          <div id="clipsList" class="ink"></div>
+          <div class="clip">
+            <p class="small ink">
+              Cuttings are saved locally on this device. No accounts, no cloud—just a drawer.
+            </p>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="ink">
+    The Broad Sheet — single-file prototype. Built for “orientation over expression.”  
+  </footer>
+
+  <script>
+    // --- Helpers
+    const $ = (id) => document.getElementById(id);
+    const storageKey = "broadSheet.clips.v1";
+    const typeKey = "broadSheet.typeScale.v1";
+    const prefsKey = "broadSheet.prefs.v1";
+
+    const state = {
+      typeScale: Number(localStorage.getItem(typeKey) || 1),
+      prefs: JSON.parse(localStorage.getItem(prefsKey) || '{"grain":true,"bleed":true,"cols":true}')
+    };
+
+    function fmtDate(d){
+      return d.toLocaleDateString(undefined, {year:"numeric", month:"short", day:"numeric"});
+    }
+
+    function setMetaLine(){
+      const now = new Date();
+      $("todayMeta").textContent = `— ${fmtDate(now)}`;
+    }
+
+    function applyTypeScale(){
+      document.documentElement.style.fontSize = (16 * state.typeScale) + "px";
+      localStorage.setItem(typeKey, String(state.typeScale));
+    }
+
+    function applyPrefs(){
+      document.body.classList.toggle("grain", !!state.prefs.grain);
+      document.body.classList.toggle("bleed", !!state.prefs.bleed);
+
+      // Columns toggle
+      const article = $("articleOut");
+      if(state.prefs.cols){
+        article.style.columnWidth = "var(--colw)";
+        article.style.columnRule = "1px solid var(--rule)";
+      } else {
+        article.style.columnWidth = "auto";
+        article.style.columnCount = "1";
+        article.style.columnRule = "none";
+      }
+
+      $("toggleGrain").setAttribute("aria-pressed", String(!!state.prefs.grain));
+      $("toggleBleed").setAttribute("aria-pressed", String(!!state.prefs.bleed));
+      $("toggleCols").setAttribute("aria-pressed", String(!!state.prefs.cols));
+
+      localStorage.setItem(prefsKey, JSON.stringify(state.prefs));
+    }
+
+    // --- Clips
+    function loadClips(){
+      return JSON.parse(localStorage.getItem(storageKey) || "[]");
+    }
+    function saveClips(clips){
+      localStorage.setItem(storageKey, JSON.stringify(clips));
+    }
+    function renderClips(){
+      const clips = loadClips();
+      const wrap = $("clipsList");
+      wrap.innerHTML = "";
+
+      if(!clips.length){
+        wrap.innerHTML = `<p class="small ink">No cuttings yet. Save a selection.</p>`;
+        return;
+      }
+
+      clips.slice().reverse().forEach((c, idxFromEnd) => {
+        const realIdx = clips.length - 1 - idxFromEnd;
+        const el = document.createElement("div");
+        el.className = "clipItem ink";
+        el.innerHTML = `
+          <div class="clipMeta ink">
+            <span>${c.when}</span>
+            <span>
+              <button class="btn ink" data-copy="${realIdx}" style="padding:6px 10px">Copy</button>
+              <button class="btn ink" data-del="${realIdx}" style="padding:6px 10px">Delete</button>
+            </span>
+          </div>
+          <div class="clipText ink">${escapeHtml(c.text)}</div>
+        `;
+        wrap.appendChild(el);
+      });
+
+      // Bind buttons
+      wrap.querySelectorAll("[data-del]").forEach(btn=>{
+        btn.addEventListener("click", () => {
+          const i = Number(btn.getAttribute("data-del"));
+          const clips = loadClips();
+          clips.splice(i,1);
+          saveClips(clips);
+          renderClips();
+        });
+      });
+
+      wrap.querySelectorAll("[data-copy]").forEach(btn=>{
+        btn.addEventListener("click", async () => {
+          const i = Number(btn.getAttribute("data-copy"));
+          const clips = loadClips();
+          try{
+            await navigator.clipboard.writeText(clips[i].text);
+            btn.textContent = "Copied";
+            setTimeout(()=>btn.textContent="Copy", 900);
+          }catch(e){
+            alert("Copy failed in this browser.");
+          }
+        });
+      });
+    }
+
+    function escapeHtml(str){
+      return (str || "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;")
+        .replace(/\n/g,"<br/>");
+    }
+
+    function getSelectionText(){
+      const sel = window.getSelection();
+      if(!sel) return "";
+      const text = sel.toString().trim();
+      return text;
+    }
+
+    // --- Header apply
+    function applyHeader(){
+      const t = $("inTitle").value.trim() || "Untitled";
+      const d = $("inDeck").value.trim();
+      const date = $("inDate").value.trim();
+      const place = $("inPlace").value.trim();
+      const mood = $("inMood").value.trim();
+
+      $("titleOut").textContent = t;
+      $("deckOut").textContent = d;
+
+      $("issueDate").textContent = "Issue: " + (date || "—");
+      $("issuePlace").textContent = "Place: " + (place || "—");
+      $("issueMood").textContent = "Mood: " + (mood || "—");
+    }
+
+    // --- Article apply (keeps simple paragraphs)
+    function applyArticle(){
+      const raw = $("inArticle").value.trim();
+      if(!raw){
+        $("articleOut").innerHTML = `<p class="dropcap ink">Paste your writing on the right.</p>`;
+        return;
+      }
+      const paras = raw.split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean);
+      const html = paras.map((p,i)=>{
+        const cls = i===0 ? "dropcap" : "";
+        return `<p class="${cls} ink">${escapeHtml(p)}</p>`;
+      }).join("");
+      $("articleOut").innerHTML = html;
+    }
+
+    // --- Controls
+    $("toggleGrain").addEventListener("click", ()=>{
+      state.prefs.grain = !state.prefs.grain;
+      applyPrefs();
+    });
+    $("toggleBleed").addEventListener("click", ()=>{
+      state.prefs.bleed = !state.prefs.bleed;
+      applyPrefs();
+    });
+    $("toggleCols").addEventListener("click", ()=>{
+      state.prefs.cols = !state.prefs.cols;
+      applyPrefs();
+    });
+
+    $("increaseType").addEventListener("click", ()=>{
+      state.typeScale = Math.min(1.25, +(state.typeScale + 0.05).toFixed(2));
+      applyTypeScale();
+    });
+    $("decreaseType").addEventListener("click", ()=>{
+      state.typeScale = Math.max(0.9, +(state.typeScale - 0.05).toFixed(2));
+      applyTypeScale();
+    });
+
+    $("applyHeader").addEventListener("click", applyHeader);
+    $("applyArticle").addEventListener("click", applyArticle);
+
+    $("stampNow").addEventListener("click", ()=>{
+      const now = new Date();
+      $("inDate").value = fmtDate(now);
+      if(!$("inMood").value.trim()) $("inMood").value = "Radiant heat";
+      applyHeader();
+    });
+
+    $("saveSelection").addEventListener("click", ()=>{
+      const text = getSelectionText();
+      if(!text){
+        alert("Highlight text in the article first.");
+        return;
+      }
+      const clips = loadClips();
+      clips.push({ text, when: fmtDate(new Date()) });
+      saveClips(clips);
+      renderClips();
+    });
+
+    $("clearClips").addEventListener("click", ()=>{
+      localStorage.removeItem(storageKey);
+      renderClips();
+    });
+
+    // --- Init
+    setMetaLine();
+    applyTypeScale();
+    applyPrefs();
+    renderClips();
+
+    // Default stamp
+    $("inDate").value = fmtDate(new Date());
+    $("inPlace").value = "Tennessee";
+    $("inMood").value = "Solune";
+    applyHeader();
+  </script>
+</body>
+</html>
