@@ -1,162 +1,496 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Translucent Sheet</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Translucent Sheet</title>
 
-<style>
-:root{
-  --ink:#141311;
-  --paper: rgba(247,241,229,.82);
-  --sun: rgba(255,255,255,.55);
-  --shade: rgba(230,222,208,.35);
-}
+  <!-- Fonts (optional, safe fallbacks included) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600&family=Iowan+Old+Style&display=swap" rel="stylesheet">
 
-html,body{
-  height:100%;
-  margin:0;
-  font-family:"EB Garamond","Iowan Old Style",serif;
-  background:
-    radial-gradient(1200px 700px at 50% 20%, var(--sun), rgba(244,237,224,.85));
-  color:var(--ink);
-}
+  <style>
+    :root{
+      --bg-1:#fbf6ea;
+      --bg-2:#ece2cf;
 
-body.shade{
-  background:
-    radial-gradient(1200px 700px at 50% 20%, var(--shade), rgba(228,220,208,.9));
-}
+      --paper:#fbf6ea;
+      --paper-2:#f3ead6;
 
-.stage{
-  min-height:100%;
-  display:grid;
-  place-items:center;
-  padding:10vh 6vw;
-}
+      --ink:#141311;
+      --muted:rgba(20,19,17,.62);
 
-.sheet{
-  width:min(72ch,92vw);
-  padding:3.2rem 3rem;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.45), rgba(255,255,255,.05)),
-    var(--paper);
-  border:1px solid rgba(210,195,165,.35);
-  border-radius:10px;
-  box-shadow:
-    0 30px 80px rgba(0,0,0,.10),
-    inset 0 0 60px rgba(255,255,255,.4);
-  position:relative;
-}
+      --edge:rgba(20,19,17,.10);
+      --rule:rgba(20,19,17,.12);
 
-.sheet:after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:
-    repeating-linear-gradient(
-      90deg,
-      rgba(120,95,60,.025) 0px,
-      rgba(120,95,60,.025) 1px,
-      transparent 4px,
-      transparent 7px
-    );
-  mix-blend-mode:multiply;
-  opacity:.5;
-  pointer-events:none;
-}
+      --glow:rgba(255,255,255,.55);
+      --shadow:rgba(0,0,0,.10);
 
-header{
-  display:flex;
-  justify-content:space-between;
-  font-variant:small-caps;
-  letter-spacing:.06em;
-  opacity:.7;
-  margin-bottom:1.6rem;
-}
+      --radius:14px;
+      --w: 980px;
+      --pad: 44px;
+      --lead: 1.62;
 
-article p{
-  font-size:1.22rem;
-  line-height:1.75;
-  margin:0 0 1.2rem 0;
-  text-shadow:
-    0 .2px 0 rgba(0,0,0,.25),
-    0 0 .6px rgba(0,0,0,.15);
-}
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --serif: "EB Garamond","Iowan Old Style",Iowan,Georgia,Times,serif;
+    }
 
-/* controls */
-.controls{
-  position:fixed;
-  bottom:1.2rem;
-  left:50%;
-  transform:translateX(-50%);
-  display:flex;
-  gap:.8rem;
-  font-size:.9rem;
-}
+    *{ box-sizing:border-box; }
 
-button{
-  font-family:inherit;
-  background:rgba(255,255,255,.6);
-  border:1px solid rgba(0,0,0,.15);
-  padding:.4rem .8rem;
-  border-radius:6px;
-  cursor:pointer;
-}
+    html,body{ height:100%; }
 
-textarea{
-  position:fixed;
-  top:1.2rem;
-  right:1.2rem;
-  width:28ch;
-  height:40vh;
-  font-family:inherit;
-  font-size:.95rem;
-  background:rgba(255,255,255,.65);
-  border:1px solid rgba(0,0,0,.15);
-  padding:.8rem;
-  border-radius:6px;
-}
-</style>
+    body{
+      margin:0;
+      color:var(--ink);
+      font-family:var(--serif);
+      background:
+        radial-gradient(1200px 700px at 50% 16%, rgba(255,255,255,.85), rgba(255,255,255,0) 60%),
+        radial-gradient(900px 500px at 50% 35%, rgba(255,238,205,.55), rgba(255,238,205,0) 60%),
+        linear-gradient(180deg, var(--bg-1), var(--bg-2));
+      display:flex;
+      min-height:100vh;
+    }
+
+    /* Right drawer */
+    .drawer{
+      position:fixed;
+      top:22px;
+      right:22px;
+      width:min(420px, calc(100vw - 44px));
+      height:min(84vh, 720px);
+      background:rgba(255,255,255,.58);
+      border:1px solid rgba(20,19,17,.16);
+      border-radius:14px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 18px 50px rgba(0,0,0,.10);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      z-index:50;
+    }
+
+    .drawerHeader{
+      padding:12px 12px 10px 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border-bottom:1px solid rgba(20,19,17,.10);
+      background:linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.30));
+    }
+
+    .pill{
+      font-family:var(--mono);
+      font-size:11px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:rgba(20,19,17,.55);
+      padding:7px 10px;
+      border:1px solid rgba(20,19,17,.14);
+      border-radius:999px;
+      background:rgba(255,255,255,.35);
+      user-select:none;
+      white-space:nowrap;
+    }
+
+    .drawerBtns{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+
+    .btn{
+      appearance:none;
+      border:1px solid rgba(20,19,17,.18);
+      background:rgba(255,255,255,.55);
+      color:rgba(20,19,17,.86);
+      border-radius:10px;
+      padding:8px 10px;
+      font-family:var(--mono);
+      font-size:12px;
+      letter-spacing:.02em;
+      cursor:pointer;
+      transition: transform .06s ease, background .15s ease, border-color .15s ease;
+    }
+
+    .btn:hover{ background:rgba(255,255,255,.72); border-color:rgba(20,19,17,.24); }
+    .btn:active{ transform: translateY(1px); }
+    .btn.primary{
+      background:rgba(255,255,255,.82);
+      border-color:rgba(20,19,17,.26);
+    }
+
+    textarea{
+      flex:1;
+      width:100%;
+      border:0;
+      outline:none;
+      resize:none;
+      padding:14px 14px 16px 14px;
+      font-family:var(--serif);
+      font-size:16px;
+      line-height:1.45;
+      background:transparent;
+      color:rgba(20,19,17,.92);
+    }
+
+    textarea::placeholder{ color:rgba(20,19,17,.40); }
+
+    .drawerFooter{
+      padding:10px 12px 12px 12px;
+      border-top:1px solid rgba(20,19,17,.10);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      background:linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,.45));
+    }
+
+    .hint{
+      font-family:var(--mono);
+      font-size:11px;
+      color:rgba(20,19,17,.55);
+      letter-spacing:.02em;
+      user-select:none;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    /* Main stage */
+    .stage{
+      width:100%;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:80px 24px;
+    }
+
+    .sheetWrap{
+      width:min(var(--w), calc(100vw - 48px));
+      position:relative;
+      filter: drop-shadow(0 22px 55px rgba(0,0,0,.12));
+    }
+
+    /* Paper */
+    .sheet{
+      position:relative;
+      border-radius:var(--radius);
+      padding: var(--pad);
+      background:
+        /* paper grain */
+        repeating-linear-gradient(
+          90deg,
+          rgba(20,19,17,.02) 0px,
+          rgba(20,19,17,.02) 1px,
+          rgba(255,255,255,0) 7px,
+          rgba(255,255,255,0) 13px
+        ),
+        /* soft fiber haze */
+        radial-gradient(900px 500px at 30% 30%, rgba(255,255,255,.55), rgba(255,255,255,0) 60%),
+        radial-gradient(700px 420px at 72% 48%, rgba(255,255,255,.42), rgba(255,255,255,0) 62%),
+        linear-gradient(180deg, rgba(255,255,255,.72), rgba(255,255,255,.55)),
+        linear-gradient(180deg, var(--paper), var(--paper-2));
+      border:1px solid rgba(20,19,17,.10);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.35),
+        inset 0 -120px 220px rgba(0,0,0,.03);
+      overflow:hidden;
+      min-height: 320px;
+    }
+
+    /* "light through fibers" sheen */
+    .sheet::before{
+      content:"";
+      position:absolute;
+      inset:-40px;
+      background:
+        radial-gradient(600px 360px at 50% 10%, rgba(255,255,255,.65), rgba(255,255,255,0) 70%),
+        radial-gradient(700px 420px at 50% 120%, rgba(255,255,255,.22), rgba(255,255,255,0) 65%);
+      pointer-events:none;
+      mix-blend-mode: screen;
+      opacity:.9;
+    }
+
+    /* edge fade */
+    .sheet::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:var(--radius);
+      box-shadow:
+        inset 0 0 0 1px rgba(20,19,17,.06),
+        inset 0 0 120px rgba(0,0,0,.06);
+      pointer-events:none;
+      opacity:.9;
+    }
+
+    .mast{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:20px;
+      margin-bottom:18px;
+      padding-bottom:10px;
+      border-bottom:1px solid var(--rule);
+      position:relative;
+      z-index:2;
+    }
+
+    .label{
+      font-family:var(--mono);
+      font-size:12px;
+      letter-spacing:.22em;
+      text-transform:uppercase;
+      color:rgba(20,19,17,.54);
+    }
+
+    .date{
+      font-family:var(--mono);
+      font-size:12px;
+      letter-spacing:.22em;
+      text-transform:uppercase;
+      color:rgba(20,19,17,.54);
+      white-space:nowrap;
+    }
+
+    .content{
+      position:relative;
+      z-index:2;
+      font-size:20px;
+      line-height:var(--lead);
+      color:rgba(20,19,17,.92);
+    }
+
+    .content p{
+      margin:0 0 18px 0;
+    }
+
+    /* Headline (optional) */
+    .headline{
+      font-variant: small-caps;
+      letter-spacing:.08em;
+      color:rgba(20,19,17,.78);
+      margin: 0 0 18px 0;
+      font-size:16px;
+    }
+
+    /* Column mode */
+    .content.columns{
+      column-count:2;
+      column-gap: 2.4rem;
+      column-rule: 1px solid rgba(20,19,17,.10);
+    }
+    .content.columns p{ break-inside: avoid; }
+
+    @media (max-width: 980px){
+      :root{ --pad: 36px; }
+      .content{ font-size:19px; }
+    }
+    @media (max-width: 860px){
+      .drawer{ position:static; width:100%; height:auto; margin:16px; }
+      body{ flex-direction:column; }
+      .stage{ padding:22px 18px 40px; }
+      .content.columns{ column-count:1; column-rule:none; }
+    }
+    @media (max-width: 520px){
+      :root{ --pad: 26px; }
+      .content{ font-size:18px; }
+      .mast{ flex-direction:column; align-items:flex-start; gap:8px; }
+      .hint{ white-space:normal; }
+    }
+
+    /* Shade mode */
+    body.shade{
+      background:
+        radial-gradient(1200px 700px at 50% 16%, rgba(30,30,30,.25), rgba(0,0,0,0) 60%),
+        linear-gradient(180deg, #1a1a1a, #0f0f0f);
+      color:#f3efe6;
+    }
+    body.shade .drawer{
+      background:rgba(20,20,20,.62);
+      border-color:rgba(255,255,255,.14);
+    }
+    body.shade .pill{ color:rgba(255,255,255,.60); border-color:rgba(255,255,255,.16); background:rgba(255,255,255,.06); }
+    body.shade .btn{ background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.16); color:rgba(255,255,255,.85); }
+    body.shade .btn:hover{ background:rgba(255,255,255,.12); }
+    body.shade textarea{ color:rgba(255,255,255,.88); }
+    body.shade textarea::placeholder{ color:rgba(255,255,255,.38); }
+    body.shade .hint{ color:rgba(255,255,255,.55); }
+    body.shade .sheet{
+      background:
+        repeating-linear-gradient(90deg, rgba(255,255,255,.02) 0px, rgba(255,255,255,.02) 1px, rgba(0,0,0,0) 7px, rgba(0,0,0,0) 13px),
+        radial-gradient(900px 500px at 30% 30%, rgba(255,255,255,.08), rgba(255,255,255,0) 60%),
+        radial-gradient(700px 420px at 72% 48%, rgba(255,255,255,.06), rgba(255,255,255,0) 62%),
+        linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06)),
+        linear-gradient(180deg, #1d1c19, #141311);
+      border-color: rgba(255,255,255,.10);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.07),
+        inset 0 -120px 220px rgba(0,0,0,.22);
+    }
+    body.shade .label, body.shade .date{ color: rgba(255,255,255,.55); }
+    body.shade .mast{ border-bottom-color: rgba(255,255,255,.14); }
+    body.shade .content{ color: rgba(255,255,255,.90); }
+    body.shade .headline{ color: rgba(255,255,255,.72); }
+
+    /* Print */
+    @media print{
+      body{ background:#fff; }
+      .drawer{ display:none !important; }
+      .stage{ padding:0; }
+      .sheetWrap{ width:100%; filter:none; }
+      .sheet{ border:1px solid #ddd; box-shadow:none; }
+    }
+  </style>
 </head>
 
 <body>
-<div class="stage">
-  <section class="sheet">
-    <header>
-      <div>Translucent Sheet</div>
-      <div id="date"></div>
-    </header>
+  <!-- Right drawer -->
+  <aside class="drawer" aria-label="Input drawer">
+    <div class="drawerHeader">
+      <div class="pill">Type here → live set</div>
+      <div class="drawerBtns">
+        <button class="btn" id="toggleShadeBtn" type="button">Sun / Shade</button>
+        <button class="btn" id="toggleColsBtn" type="button">Single / Columns</button>
+        <button class="btn primary" id="printBtn" type="button">Print</button>
+      </div>
+    </div>
 
-    <article id="page">
-      <p>This is not meant to be consumed quickly.</p>
-      <p>The paper is thin. Light passes through it.</p>
-      <p>What remains is what matters.</p>
-    </article>
-  </section>
-</div>
+    <textarea id="loader" spellcheck="true" placeholder="Title (optional)
+      
+Write as paragraphs.
 
-<textarea id="loader" placeholder="Paste text here…"></textarea>
+Cmd+Enter prints."></textarea>
 
-<div class="controls">
-  <button onclick="toggleLight()">Sun / Shade</button>
-  <button onclick="loadText()">Print</button>
-</div>
+    <div class="drawerFooter">
+      <div class="hint" id="status">Live.</div>
+      <div class="hint">Tip: blank line = new paragraph</div>
+    </div>
+  </aside>
 
-<script>
-const date = new Date();
-document.getElementById("date").textContent =
-  date.toLocaleDateString(undefined,{month:"short",day:"2-digit",year:"numeric"});
+  <!-- Main -->
+  <main class="stage">
+    <div class="sheetWrap">
+      <section class="sheet">
+        <header class="mast">
+          <div class="label" id="label">Translucent Sheet</div>
+          <div class="date" id="date">—</div>
+        </header>
 
-function toggleLight(){
-  document.body.classList.toggle("shade");
-}
+        <article class="content" id="page">
+          <p>This is not meant to be consumed quickly.</p>
+          <p>The paper is thin. Light passes through it.</p>
+          <p>What remains is what matters.</p>
+        </article>
+      </section>
+    </div>
+  </main>
 
-function loadText(){
-  const t = document.getElementById("loader").value.trim();
-  if(!t) return;
-  const html = t.split(/\n\n+/).map(p=>`<p>${p}</p>`).join("");
-  document.getElementById("page").innerHTML = html;
-}
-</script>
+  <script>
+    // ---------- Helpers ----------
+    function escapeHTML(str){
+      return str
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function setDate(){
+      const d = new Date();
+      const s = d.toLocaleDateString(undefined,{month:"short",day:"2-digit",year:"numeric"});
+      document.getElementById("date").textContent = s;
+    }
+
+    // ---------- Core render ----------
+    const loader = document.getElementById("loader");
+    const page = document.getElementById("page");
+    const statusEl = document.getElementById("status");
+
+    function renderText(raw){
+      const t = (raw || "").trim();
+
+      if(!t){
+        page.innerHTML = `
+          <p>This is not meant to be consumed quickly.</p>
+          <p>The paper is thin. Light passes through it.</p>
+          <p>What remains is what matters.</p>
+        `;
+        statusEl.textContent = "Live.";
+        return;
+      }
+
+      const lines = t.split("\n");
+      const first = (lines[0] || "").trim();
+
+      // If first line is short AND there's more, treat it as a headline
+      let headline = "";
+      let body = t;
+
+      if(first && first.length <= 52 && lines.length > 1){
+        headline = first;
+        body = lines.slice(1).join("\n").trim();
+      }
+
+      // Paragraph rules:
+      // - If blank lines exist -> split on blank lines
+      // - Else split on single newlines
+      let parts = body.includes("\n\n")
+        ? body.split(/\n\s*\n+/)
+        : body.split(/\n+/);
+
+      parts = parts.map(p => p.trim()).filter(Boolean);
+
+      const headHTML = headline
+        ? `<p class="headline">${escapeHTML(headline)}</p>`
+        : "";
+
+      const bodyHTML = parts.map(p => `<p>${escapeHTML(p)}</p>`).join("");
+
+      page.innerHTML = headHTML + bodyHTML;
+
+      const wordCount = t.split(/\s+/).filter(Boolean).length;
+      statusEl.textContent = `${wordCount} words.`;
+    }
+
+    // ---------- Controls ----------
+    function toggleShade(){
+      document.body.classList.toggle("shade");
+    }
+
+    function toggleColumns(){
+      page.classList.toggle("columns");
+    }
+
+    function printNow(){
+      // ensure latest render, then print
+      renderText(loader.value);
+      window.print();
+    }
+
+    // Buttons
+    document.getElementById("toggleShadeBtn").addEventListener("click", toggleShade);
+    document.getElementById("toggleColsBtn").addEventListener("click", toggleColumns);
+    document.getElementById("printBtn").addEventListener("click", printNow);
+
+    // Live typing
+    loader.addEventListener("input", () => renderText(loader.value));
+
+    // Keyboard shortcut: Cmd/Ctrl + Enter prints
+    loader.addEventListener("keydown", (e) => {
+      if((e.metaKey || e.ctrlKey) && e.key === "Enter"){
+        e.preventDefault();
+        printNow();
+      }
+    });
+
+    // Initial
+    setDate();
+    renderText(loader.value);
+  </script>
 </body>
 </html>
