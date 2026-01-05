@@ -1,205 +1,162 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Translucent Sheet</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Translucent Sheet</title>
 
-  <style>
-    :root{
-      --ink:#141311;
-      --warm:#fbf6ea;
-      --cool:#efe9dc;
-      --paper:#f7f1e5;
-      --edge:#e7dfcf;
-      --shadow: rgba(0,0,0,.10);
-    }
+<style>
+:root{
+  --ink:#141311;
+  --paper: rgba(247,241,229,.82);
+  --sun: rgba(255,255,255,.55);
+  --shade: rgba(230,222,208,.35);
+}
 
-    /* page light */
-    html,body{
-      height:100%;
-      margin:0;
-      color:var(--ink);
-      background:
-        radial-gradient(1200px 700px at 50% 18%, rgba(255,250,238,.95), rgba(244,237,224,.75) 55%, rgba(236,230,219,.85) 100%),
-        linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,0));
-      font-family: "EB Garamond","Iowan Old Style","Garamond","Georgia",serif;
-      -webkit-font-smoothing: antialiased;
-      text-rendering: geometricPrecision;
-    }
+html,body{
+  height:100%;
+  margin:0;
+  font-family:"EB Garamond","Iowan Old Style",serif;
+  background:
+    radial-gradient(1200px 700px at 50% 20%, var(--sun), rgba(244,237,224,.85));
+  color:var(--ink);
+}
 
-    /* a faint field of “air” */
-    body:before{
-      content:"";
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      background:
-        radial-gradient(900px 520px at 50% 50%, rgba(255,255,255,.22), rgba(255,255,255,0) 70%),
-        radial-gradient(700px 420px at 35% 30%, rgba(255,248,232,.28), rgba(255,248,232,0) 72%),
-        radial-gradient(700px 420px at 65% 65%, rgba(238,246,255,.16), rgba(238,246,255,0) 72%);
-      mix-blend-mode: multiply;
-      opacity:.9;
-    }
+body.shade{
+  background:
+    radial-gradient(1200px 700px at 50% 20%, var(--shade), rgba(228,220,208,.9));
+}
 
-    .stage{
-      min-height:100%;
-      display:grid;
-      place-items:center;
-      padding: 10vh 6vw;
-    }
+.stage{
+  min-height:100%;
+  display:grid;
+  place-items:center;
+  padding:10vh 6vw;
+}
 
-    /* the sheet */
-    .sheet{
-      position:relative;
-      width:min(72ch, 92vw);
-      padding: clamp(2.4rem, 4.5vw, 3.6rem) clamp(2.1rem, 4.2vw, 3.2rem);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.45), rgba(255,255,255,.05)),
-        radial-gradient(900px 500px at 50% 20%, rgba(255,255,255,.55), rgba(255,255,255,0) 70%),
-        linear-gradient(90deg, rgba(255,255,255,.28), rgba(255,255,255,0) 35%, rgba(255,255,255,.18)),
-        rgba(247,241,229,.82);
-      border: 1px solid rgba(210,195,165,.35);
-      border-radius: 10px;
-      box-shadow:
-        0 26px 70px var(--shadow),
-        0 10px 20px rgba(0,0,0,.06);
-      overflow:hidden;
-      backdrop-filter: blur(2px);
-    }
+.sheet{
+  width:min(72ch,92vw);
+  padding:3.2rem 3rem;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.45), rgba(255,255,255,.05)),
+    var(--paper);
+  border:1px solid rgba(210,195,165,.35);
+  border-radius:10px;
+  box-shadow:
+    0 30px 80px rgba(0,0,0,.10),
+    inset 0 0 60px rgba(255,255,255,.4);
+  position:relative;
+}
 
-    /* deckled-ish edge + inner lift */
-    .sheet:before{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      background:
-        radial-gradient(12px 10px at 12% 14%, rgba(255,255,255,.35), rgba(255,255,255,0) 70%),
-        radial-gradient(14px 12px at 88% 22%, rgba(255,255,255,.32), rgba(255,255,255,0) 70%),
-        radial-gradient(14px 12px at 22% 88%, rgba(255,255,255,.28), rgba(255,255,255,0) 70%),
-        radial-gradient(14px 12px at 80% 82%, rgba(255,255,255,.26), rgba(255,255,255,0) 70%),
-        linear-gradient(180deg, rgba(255,255,255,.25), rgba(255,255,255,0) 45%, rgba(0,0,0,.04));
-      pointer-events:none;
-      mix-blend-mode: overlay;
-      opacity:.9;
-    }
+.sheet:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(120,95,60,.025) 0px,
+      rgba(120,95,60,.025) 1px,
+      transparent 4px,
+      transparent 7px
+    );
+  mix-blend-mode:multiply;
+  opacity:.5;
+  pointer-events:none;
+}
 
-    /* fiber grain (no images; just gradients) */
-    .sheet:after{
-      content:"";
-      position:absolute;
-      inset:0;
-      pointer-events:none;
-      background:
-        repeating-linear-gradient(
-          90deg,
-          rgba(120,95,60,.030) 0px,
-          rgba(120,95,60,.030) 1px,
-          rgba(255,255,255,0) 3px,
-          rgba(255,255,255,0) 6px
-        ),
-        repeating-linear-gradient(
-          0deg,
-          rgba(90,75,55,.018) 0px,
-          rgba(90,75,55,.018) 1px,
-          rgba(255,255,255,0) 2px,
-          rgba(255,255,255,0) 7px
-        ),
-        radial-gradient(800px 420px at 50% 60%, rgba(255,255,255,.20), rgba(255,255,255,0) 75%);
-      mix-blend-mode:multiply;
-      opacity:.55;
-    }
+header{
+  display:flex;
+  justify-content:space-between;
+  font-variant:small-caps;
+  letter-spacing:.06em;
+  opacity:.7;
+  margin-bottom:1.6rem;
+}
 
-    header{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-end;
-      gap:1rem;
-      margin-bottom: 2.2rem;
-    }
+article p{
+  font-size:1.22rem;
+  line-height:1.75;
+  margin:0 0 1.2rem 0;
+  text-shadow:
+    0 .2px 0 rgba(0,0,0,.25),
+    0 0 .6px rgba(0,0,0,.15);
+}
 
-    .mark{
-      font-variant: small-caps;
-      letter-spacing:.06em;
-      font-size:.95rem;
-      opacity:.72;
-    }
+/* controls */
+.controls{
+  position:fixed;
+  bottom:1.2rem;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  gap:.8rem;
+  font-size:.9rem;
+}
 
-    .date{
-      font-variant: small-caps;
-      letter-spacing:.06em;
-      font-size:.9rem;
-      opacity:.55;
-      white-space:nowrap;
-    }
+button{
+  font-family:inherit;
+  background:rgba(255,255,255,.6);
+  border:1px solid rgba(0,0,0,.15);
+  padding:.4rem .8rem;
+  border-radius:6px;
+  cursor:pointer;
+}
 
-    article{
-      position:relative;
-      z-index:1;
-    }
-
-    p{
-      margin:0 0 1.25rem 0;
-      font-size: clamp(1.10rem, 1.0vw + 0.95rem, 1.24rem);
-      line-height: 1.75;
-      letter-spacing: .002em;
-      text-wrap: pretty;
-    }
-
-    /* ink: slightly imperfect */
-    .ink{
-      text-shadow:
-        0 .2px 0 rgba(0,0,0,.28),
-        0 0 0.6px rgba(0,0,0,.18);
-      filter: saturate(0.98) contrast(1.02);
-    }
-
-    /* first paragraph: quiet emphasis */
-    p.lead{
-      margin-top:.2rem;
-      font-size: clamp(1.15rem, 1.15vw + 0.95rem, 1.34rem);
-      line-height: 1.68;
-    }
-
-    /* a faint “press line” */
-    .rule{
-      height:1px;
-      background: linear-gradient(90deg, rgba(20,19,17,0), rgba(20,19,17,.18), rgba(20,19,17,0));
-      margin: 1.8rem 0 1.6rem 0;
-      opacity:.55;
-    }
-
-    /* mobile: slightly less padding */
-    @media (max-width: 520px){
-      .sheet{ border-radius: 8px; }
-      header{ margin-bottom: 1.6rem; }
-    }
-  </style>
+textarea{
+  position:fixed;
+  top:1.2rem;
+  right:1.2rem;
+  width:28ch;
+  height:40vh;
+  font-family:inherit;
+  font-size:.95rem;
+  background:rgba(255,255,255,.65);
+  border:1px solid rgba(0,0,0,.15);
+  padding:.8rem;
+  border-radius:6px;
+}
+</style>
 </head>
 
 <body>
-  <div class="stage">
-    <section class="sheet" aria-label="Translucent Sheet">
-      <header>
-        <div class="mark">Translucent Sheet</div>
-        <div class="date" id="today"></div>
-      </header>
+<div class="stage">
+  <section class="sheet">
+    <header>
+      <div>Translucent Sheet</div>
+      <div id="date"></div>
+    </header>
 
-      <div class="rule"></div>
+    <article id="page">
+      <p>This is not meant to be consumed quickly.</p>
+      <p>The paper is thin. Light passes through it.</p>
+      <p>What remains is what matters.</p>
+    </article>
+  </section>
+</div>
 
-      <article class="ink">
-        <p class="lead">This is not meant to be consumed quickly.</p>
-        <p>The paper is thin. Light passes through it.</p>
-        <p>What remains is what matters.</p>
-      </article>
-    </section>
-  </div>
+<textarea id="loader" placeholder="Paste text here…"></textarea>
 
-  <script>
-    // tiny, optional: date stamp like a printed sheet
-    const d = new Date();
-    const opts = { year: "numeric", month: "short", day: "2-digit" };
-    document.getElementById("today").textContent = d.toLocaleDateString(undefined, opts);
-  </script>
+<div class="controls">
+  <button onclick="toggleLight()">Sun / Shade</button>
+  <button onclick="loadText()">Print</button>
+</div>
+
+<script>
+const date = new Date();
+document.getElementById("date").textContent =
+  date.toLocaleDateString(undefined,{month:"short",day:"2-digit",year:"numeric"});
+
+function toggleLight(){
+  document.body.classList.toggle("shade");
+}
+
+function loadText(){
+  const t = document.getElementById("loader").value.trim();
+  if(!t) return;
+  const html = t.split(/\n\n+/).map(p=>`<p>${p}</p>`).join("");
+  document.getElementById("page").innerHTML = html;
+}
+</script>
 </body>
 </html>
