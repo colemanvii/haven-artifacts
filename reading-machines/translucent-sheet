@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Translucent Sheet</title>
+<style>
+  :root {
+    --paper: #f6f4ef;
+    --ink: #1e1d1b;
+    --light: #fff7e8;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: radial-gradient(circle at 50% 20%, var(--light), #e9e6df);
+    font-family: "EB Garamond", "Iowan Old Style", serif;
+    color: var(--ink);
+  }
+
+  .sheet {
+    max-width: 42ch;
+    margin: 8rem auto;
+    padding: 4rem 3rem;
+    background: rgba(246, 244, 239, 0.94);
+    box-shadow:
+      0 20px 40px rgba(0,0,0,0.08),
+      inset 0 0 80px rgba(255,255,255,0.4);
+  }
+
+  p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin: 0 0 1.5rem 0;
+    text-shadow: 0 0 0.3px rgba(0,0,0,0.4);
+  }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+  <p>
+    This is not meant to be consumed quickly.
+  </p>
+  <p>
+    The paper is thin. The light passes through it.
+    What remains is what matters.
+  </p>
+</div>
+
+</body>
+</html>
