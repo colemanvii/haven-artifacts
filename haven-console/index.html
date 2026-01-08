@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Haven View — Monk Mode v2.1</title>
+  <title>Haven Console — Monk Mode v2.1</title>
   <style>
     :root{
       --bg:#f4f6f7;
@@ -365,7 +365,7 @@
   <header class="topstrip">
     <div class="topstrip-inner">
       <div class="brand">
-        HAVEN VIEW <span class="sub">MONK MODE v2.1</span>
+        HAVEN CONSOLE <span class="sub">MONK MODE v2.1</span>
       </div>
 
       <div class="topmeta">
@@ -399,7 +399,7 @@
         <div class="title">Structure</div>
         <div class="ver">v2.1</div>
       </div>
-      <div class="nav" role="tablist" aria-label="Haven View sections">
+      <div class="nav" role="tablist" aria-label="Haven Console sections">
         <button class="navbtn" data-tab="orientation" aria-selected="true">
           <span class="name">Orientation</span><span class="hint">Now</span>
         </button>
@@ -541,17 +541,11 @@
               </summary>
               <div class="stack-body">
                 <div class="grid2">
-                  <div>
-                    <label>Purpose</label><textarea id="p-systems"></textarea>
-                  </div>
-                  <div>
-                    <label>Now</label><textarea id="n-systems" placeholder="Next concrete action."></textarea>
-                  </div>
+                  <div><label>Purpose</label><textarea id="p-systems"></textarea></div>
+                  <div><label>Now</label><textarea id="n-systems" placeholder="Next concrete action."></textarea></div>
                 </div>
                 <div class="grid2">
-                  <div>
-                    <label>Risk</label><textarea id="r-systems" placeholder="What breaks if ignored."></textarea>
-                  </div>
+                  <div><label>Risk</label><textarea id="r-systems" placeholder="What breaks if ignored."></textarea></div>
                   <div>
                     <label>Signal</label>
                     <select id="s-systems">
@@ -594,7 +588,6 @@
               </div>
             </details>
 
-            <!-- PAINTING (explicit) -->
             <details class="stack" data-acc="work">
               <summary>
                 <div class="stack-title">
@@ -612,7 +605,7 @@
                   <div><label>Textile series — now</label><textarea id="n-textile" placeholder="Next process-study on canvas."></textarea></div>
                 </div>
                 <div class="grid2">
-                  <div><label>Cadence</label><textarea id="p-painting" placeholder="Weekly rhythm: 1–2 Lemon Pie studies + 1 textile process study."></textarea></div>
+                  <div><label>Cadence</label><textarea id="p-painting" placeholder="Weekly rhythm."></textarea></div>
                   <div>
                     <label>Signal</label>
                     <select id="s-painting">
@@ -804,9 +797,8 @@
   </div>
 
   <script>
-    /* Haven View — Monk Mode v2.1 (localStorage) */
     const $ = (id)=>document.getElementById(id);
-    const storeKey = "haven_view_monk_v21";
+    const storeKey = "haven_console_monk_v21";
 
     const defaults = {
       status:"green",
@@ -886,7 +878,6 @@
       });
     });
 
-    // Render log
     function escapeHtml(s){
       return String(s)
         .replaceAll("&","&amp;")
@@ -895,6 +886,7 @@
         .replaceAll('"',"&quot;")
         .replaceAll("'","&#039;");
     }
+
     function renderLog(){
       const box = $("logList");
       const items = state.log || [];
@@ -932,7 +924,6 @@
       }
     }
 
-    // Hydrate fields
     function hydrate(){
       $("statusSelect").value = state.status;
       $("stateSelect").value = state.state;
@@ -966,8 +957,8 @@
       $("foodLine").value = state.body.food || "";
       $("wattLine").value = state.body.watt || "";
 
-      // Work
       const w = state.work;
+
       $("p-systems").value = w.systems.p || "";
       $("n-systems").value = w.systems.n || "";
       $("r-systems").value = w.systems.r || "";
@@ -1003,7 +994,6 @@
       renderIntegrity();
     }
 
-    // Global status/state
     $("statusSelect").addEventListener("change", (e)=>{
       state.status = e.target.value;
       paintStatusDot(state.status);
@@ -1014,7 +1004,6 @@
       save();
     });
 
-    // Save handlers
     $("saveOrientation").addEventListener("click", ()=>{
       state.season = $("seasonLine").value;
       state.win = $("winLine").value;
@@ -1045,9 +1034,9 @@
       save();
     });
 
-    function bindWorkSignal(selectId, sigId, pathSetter){
+    function bindWorkSignal(selectId, sigId, setter){
       $(selectId).addEventListener("change", (e)=>{
-        pathSetter(e.target.value);
+        setter(e.target.value);
         paintSig(sigId, e.target.value);
         save(); renderIntegrity();
       });
@@ -1106,7 +1095,6 @@
       save(); renderIntegrity();
     });
 
-    // Log
     $("addLog").addEventListener("click", ()=>{
       const type = $("logType").value;
       const text = $("logText").value.trim();
@@ -1115,6 +1103,7 @@
       $("logText").value = "";
       save(); renderLog();
     });
+
     $("clearLog").addEventListener("click", ()=>{
       if(!confirm("Clear all log entries?")) return;
       state.log = [];
