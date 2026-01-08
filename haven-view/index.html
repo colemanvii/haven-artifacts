@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Haven View — Monk Mode</title>
+  <title>Haven View — Monk Mode v2.1</title>
   <style>
     :root{
       --bg:#f4f6f7;
@@ -11,12 +11,11 @@
       --ink:#0f1a1f;
       --muted:#55636b;
       --line:#d8dde0;
-      --accent:#0b7f6c;      /* haven green */
-      --warn:#c88a1a;        /* warm tangerine */
+      --accent:#0b7f6c;
+      --warn:#c88a1a;
       --danger:#b33a3a;
       --shadow:0 10px 28px rgba(15,26,31,.08);
       --r:18px;
-      --r2:14px;
       --max:1220px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
@@ -31,20 +30,6 @@
       line-height:1.35;
       -webkit-font-smoothing:antialiased;
       text-rendering:optimizeLegibility;
-    }
-
-    /* Layout */
-    .app{
-      max-width:var(--max);
-      margin:0 auto;
-      padding:14px 14px 36px;
-      display:grid;
-      grid-template-columns: 250px 1fr;
-      gap:14px;
-      align-items:start;
-    }
-    @media (max-width: 980px){
-      .app{grid-template-columns:1fr}
     }
 
     /* Top strip */
@@ -84,7 +69,6 @@
       flex-wrap:wrap;
       justify-content:flex-end;
     }
-
     .pill{
       display:inline-flex; align-items:center; gap:8px;
       border:1px solid var(--line);
@@ -106,6 +90,18 @@
     .mono{font-family:var(--mono); letter-spacing:.08em; text-transform:uppercase; font-size:11px;}
     .sep{opacity:.35}
 
+    /* App layout */
+    .app{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:14px 14px 36px;
+      display:grid;
+      grid-template-columns: 250px 1fr;
+      gap:14px;
+      align-items:start;
+    }
+    @media (max-width: 980px){ .app{grid-template-columns:1fr} }
+
     /* Sidebar */
     .side{
       position:sticky; top:62px;
@@ -116,9 +112,7 @@
       box-shadow:var(--shadow);
       overflow:hidden;
     }
-    @media (max-width: 980px){
-      .side{position:relative; top:auto}
-    }
+    @media (max-width: 980px){ .side{position:relative; top:auto} }
     .side-head{
       padding:14px 14px 10px;
       border-bottom:1px solid var(--line);
@@ -136,12 +130,7 @@
       font-size:11px;
       color:var(--muted);
     }
-    .nav{
-      padding:8px;
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-    }
+    .nav{ padding:8px; display:flex; flex-direction:column; gap:6px; }
     .nav button{
       width:100%;
       border:1px solid transparent;
@@ -172,17 +161,16 @@
       text-transform:uppercase;
     }
 
-    /* Main */
+    /* Main grid */
     .main{
       display:grid;
       grid-template-columns: 1fr 380px;
       gap:14px;
       align-items:start;
     }
-    @media (max-width: 980px){
-      .main{grid-template-columns:1fr}
-    }
+    @media (max-width: 980px){ .main{grid-template-columns:1fr} }
 
+    /* Cards */
     .card{
       background:var(--panel);
       border:1px solid var(--line);
@@ -194,6 +182,7 @@
       padding:16px 16px 10px;
       display:flex; align-items:flex-start; justify-content:space-between;
       gap:10px;
+      border-bottom:1px solid rgba(216,221,224,.55);
     }
     .cap h2{
       margin:0;
@@ -210,13 +199,9 @@
       color:var(--muted);
       white-space:nowrap;
     }
-    .body{padding:0 16px 16px;}
+    .body{padding:12px 16px 16px;}
     .muted{color:var(--muted)}
-    .grid2{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-    }
+    .grid2{display:grid; grid-template-columns: 1fr 1fr; gap:10px;}
     @media (max-width: 620px){ .grid2{grid-template-columns:1fr} }
 
     /* Inputs */
@@ -240,14 +225,8 @@
       font-size:11px;
       color:var(--muted);
     }
-    .row{
-      display:flex; gap:10px; align-items:center;
-    }
-    .row > *{flex:1}
-    .btnbar{
-      display:flex; gap:10px; flex-wrap:wrap;
-      margin-top:12px;
-    }
+
+    .btnbar{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
     .btn{
       border:1px solid rgba(216,221,224,.95);
       background:#fff;
@@ -266,25 +245,21 @@
       background:rgba(11,127,108,.08);
     }
 
-    /* Work stack items */
-    details.stack{
-      border-top:1px solid var(--line);
-    }
+    /* Work stack: compact list + accordion */
+    .stacklist{padding:0}
+    details.stack{border-top:1px solid rgba(216,221,224,.7)}
     details.stack summary{
       list-style:none;
       cursor:pointer;
-      padding:14px 16px;
+      padding:12px 16px;
       display:flex;
-      align-items:flex-start;
+      align-items:center;
       justify-content:space-between;
       gap:12px;
       user-select:none;
     }
     details.stack summary::-webkit-details-marker{display:none}
-    .stack-title{
-      display:flex; flex-direction:column; gap:6px;
-      min-width:0;
-    }
+    .stack-title{display:flex; flex-direction:column; gap:4px; min-width:0;}
     .stack-title .name{
       font-weight:900;
       letter-spacing:.14em;
@@ -293,13 +268,14 @@
     }
     .stack-title .desc{
       color:var(--muted);
-      font-size:14px;
+      font-size:13px;
       font-weight:650;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:520px;
     }
-    .stack-right{
-      display:flex; align-items:center; gap:10px;
-      flex:0 0 auto;
-    }
+    .stack-right{display:flex; align-items:center; gap:10px; flex:0 0 auto;}
     .sig{
       display:inline-flex; align-items:center; gap:8px;
       border:1px solid var(--line);
@@ -312,11 +288,7 @@
       font-size:10px;
       color:var(--muted);
     }
-    .sig i{
-      width:9px; height:9px; border-radius:999px;
-      background:var(--accent);
-      display:inline-block;
-    }
+    .sig i{width:9px; height:9px; border-radius:999px; background:var(--accent); display:inline-block;}
     .sig[data-s="yellow"] i{background:var(--warn)}
     .sig[data-s="red"] i{background:var(--danger)}
     .chev{
@@ -330,12 +302,14 @@
     }
     details[open] .chev{transform:rotate(45deg); opacity:1}
     .stack-body{
-      padding:0 16px 16px;
+      padding:0 16px 14px;
       color:var(--muted);
       font-size:14px;
     }
+    .stack-body .grid2{margin-top:8px}
+    .stack-body textarea{min-height:64px}
 
-    /* Right column day */
+    /* Right column (Today) */
     .day h3{
       margin:10px 0 6px;
       font-family:var(--mono);
@@ -344,11 +318,7 @@
       font-size:11px;
       color:var(--muted);
     }
-    .day .big{
-      font-size:16px;
-      font-weight:750;
-      margin:0;
-    }
+    .day .big{font-size:16px; font-weight:750; margin:0;}
     .help{
       margin-top:10px;
       padding:12px 12px;
@@ -358,12 +328,10 @@
       color:#2a3a41;
       font-weight:650;
     }
+    .dangerline{color:var(--danger); font-weight:800}
 
-    /* Log */
-    .loglist{
-      margin-top:10px;
-      border-top:1px solid var(--line);
-    }
+    /* Archive */
+    .loglist{margin-top:10px; border-top:1px solid var(--line);}
     .logitem{
       padding:12px 0;
       border-bottom:1px solid rgba(216,221,224,.6);
@@ -387,21 +355,22 @@
       flex:1 1 auto;
       white-space:pre-wrap;
     }
-    .dangerline{color:var(--danger); font-weight:800}
+
+    /* Sections */
+    .section{display:none}
+    .section.active{display:block}
   </style>
 </head>
 <body>
-  <!-- TOP STRIP -->
   <header class="topstrip">
     <div class="topstrip-inner">
       <div class="brand">
-        HAVEN VIEW <span class="sub">MONK MODE</span>
+        HAVEN VIEW <span class="sub">MONK MODE v2.1</span>
       </div>
 
       <div class="topmeta">
         <div class="pill">
-          <span class="mono">Status</span>
-          <span class="sep">·</span>
+          <span class="mono">Status</span><span class="sep">·</span>
           <span class="dot" id="statusDot" aria-hidden="true"></span>
           <select id="statusSelect" aria-label="Overall status" style="width:auto; padding:6px 10px; border-radius:999px;">
             <option value="green">GREEN</option>
@@ -411,8 +380,7 @@
         </div>
 
         <div class="pill">
-          <span class="mono">State</span>
-          <span class="sep">·</span>
+          <span class="mono">State</span><span class="sep">·</span>
           <select id="stateSelect" aria-label="Inner state" style="width:auto; padding:6px 10px; border-radius:999px;">
             <option value="Ignition">Ignition</option>
             <option value="Glide">Glide</option>
@@ -420,50 +388,46 @@
           </select>
         </div>
 
-        <div class="pill">
-          <span class="mono" id="todayDate"></span>
-        </div>
+        <div class="pill"><span class="mono" id="todayDate"></span></div>
       </div>
     </div>
   </header>
 
   <div class="app">
-    <!-- SIDEBAR -->
     <aside class="side">
       <div class="side-head">
         <div class="title">Structure</div>
-        <div class="ver">v2</div>
+        <div class="ver">v2.1</div>
       </div>
       <div class="nav" role="tablist" aria-label="Haven View sections">
         <button class="navbtn" data-tab="orientation" aria-selected="true">
-          <span class="name">Orientation</span>
-          <span class="hint">Now</span>
+          <span class="name">Orientation</span><span class="hint">Now</span>
+        </button>
+        <button class="navbtn" data-tab="year" aria-selected="false">
+          <span class="name">Year</span><span class="hint">Targets</span>
+        </button>
+        <button class="navbtn" data-tab="weekly" aria-selected="false">
+          <span class="name">Weekly</span><span class="hint">Rhythm</span>
         </button>
         <button class="navbtn" data-tab="work" aria-selected="false">
-          <span class="name">Work</span>
-          <span class="hint">Build</span>
+          <span class="name">Work</span><span class="hint">Build</span>
         </button>
         <button class="navbtn" data-tab="life" aria-selected="false">
-          <span class="name">Life</span>
-          <span class="hint">Home</span>
+          <span class="name">Life</span><span class="hint">Home</span>
         </button>
         <button class="navbtn" data-tab="body" aria-selected="false">
-          <span class="name">Body</span>
-          <span class="hint">Wattage</span>
+          <span class="name">Body</span><span class="hint">Wattage</span>
         </button>
         <button class="navbtn" data-tab="archive" aria-selected="false">
-          <span class="name">Archive</span>
-          <span class="hint">Log</span>
+          <span class="name">Archive</span><span class="hint">Log</span>
         </button>
       </div>
     </aside>
 
-    <!-- MAIN -->
     <main class="main">
-      <!-- LEFT MAIN COLUMN -->
       <div>
-        <!-- ORIENTATION PANEL -->
-        <section class="section card" id="orientation" style="display:block;">
+        <!-- ORIENTATION -->
+        <section class="section card active" id="orientation">
           <div class="cap">
             <h2>Orientation</h2>
             <div class="tag">Win → Exclusion → Season</div>
@@ -484,153 +448,245 @@
             </div>
 
             <div class="btnbar">
-              <button class="btn primary" id="saveAll">Save</button>
-              <button class="btn" id="clearAll">Clear</button>
+              <button class="btn primary" id="saveOrientation">Save</button>
+              <button class="btn" id="clearOrientation">Clear</button>
             </div>
           </div>
         </section>
 
-        <!-- WORK PANEL -->
-        <section class="section card" id="work" style="display:none;">
+        <!-- YEAR -->
+        <section class="section card" id="year">
+          <div class="cap">
+            <h2>Year</h2>
+            <div class="tag">Objectives · Targets · Cadence</div>
+          </div>
+          <div class="body">
+            <div class="grid2">
+              <div>
+                <label for="yearObjectives">Year objectives</label>
+                <textarea id="yearObjectives" placeholder="Bullets. Keep it clean."></textarea>
+              </div>
+              <div>
+                <label for="yearFocus">Year focus (one line)</label>
+                <input id="yearFocus" placeholder="e.g., Build the spine + paint the year." />
+                <label for="yearExclusions">Exclusions (what you won’t chase)</label>
+                <textarea id="yearExclusions" placeholder="Name it. Relief follows."></textarea>
+              </div>
+            </div>
+
+            <div class="grid2">
+              <div>
+                <label for="yearMoney">Money target</label>
+                <input id="yearMoney" placeholder="Annual number / monthly number." />
+                <label for="yearBTC">BTC / sats mission</label>
+                <input id="yearBTC" placeholder="Weekly sats plan / goal." />
+              </div>
+              <div>
+                <label for="yearOutput">Output targets</label>
+                <textarea id="yearOutput" placeholder="Paintings / studies / posts / films / episodes."></textarea>
+              </div>
+            </div>
+
+            <div class="btnbar">
+              <button class="btn primary" id="saveYear">Save Year</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- WEEKLY -->
+        <section class="section card" id="weekly">
+          <div class="cap">
+            <h2>Weekly</h2>
+            <div class="tag">Top 3 · Metrics · Plan</div>
+          </div>
+          <div class="body">
+            <label for="weekTop3">This week — top 3</label>
+            <textarea id="weekTop3" placeholder="Three priorities. Nothing else matters."></textarea>
+
+            <div class="grid2">
+              <div>
+                <label for="weekMetrics">Weekly metrics (simple)</label>
+                <textarea id="weekMetrics" placeholder="Sleep avg / workouts / deep work blocks / money deposited / paintings started."></textarea>
+              </div>
+              <div>
+                <label for="weekPlan">Weekly plan (Mon–Sun, rough)</label>
+                <textarea id="weekPlan" placeholder="Just enough structure to land reality."></textarea>
+              </div>
+            </div>
+
+            <div class="btnbar">
+              <button class="btn primary" id="saveWeekly">Save Weekly</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- WORK -->
+        <section class="section card" id="work">
           <div class="cap">
             <h2>Work Stack</h2>
             <div class="tag">Purpose · Now · Risk · Signal</div>
           </div>
 
-          <details class="stack" open>
-            <summary>
-              <div class="stack-title">
-                <div class="name">Haven Systems</div>
-                <div class="desc">Legal, financial, operational spine.</div>
+          <div class="stacklist">
+            <details class="stack" open data-acc="work">
+              <summary>
+                <div class="stack-title">
+                  <div class="name">Haven Systems</div>
+                  <div class="desc">Legal, financial, operational spine.</div>
+                </div>
+                <div class="stack-right">
+                  <div class="sig" id="sig-systems" data-s="green"><i></i><span>GREEN</span></div>
+                  <div class="chev" aria-hidden="true"></div>
+                </div>
+              </summary>
+              <div class="stack-body">
+                <div class="grid2">
+                  <div>
+                    <label>Purpose</label><textarea id="p-systems"></textarea>
+                  </div>
+                  <div>
+                    <label>Now</label><textarea id="n-systems" placeholder="Next concrete action."></textarea>
+                  </div>
+                </div>
+                <div class="grid2">
+                  <div>
+                    <label>Risk</label><textarea id="r-systems" placeholder="What breaks if ignored."></textarea>
+                  </div>
+                  <div>
+                    <label>Signal</label>
+                    <select id="s-systems">
+                      <option value="green">GREEN</option>
+                      <option value="yellow">YELLOW</option>
+                      <option value="red">RED</option>
+                    </select>
+                  </div>
+                </div>
               </div>
-              <div class="stack-right">
-                <div class="sig" id="sig-systems" data-s="green"><i></i><span>Signal</span></div>
-                <div class="chev" aria-hidden="true"></div>
-              </div>
-            </summary>
-            <div class="stack-body">
-              <label>Purpose</label>
-              <input id="p-systems" placeholder="Why this exists." />
-              <label>Now</label>
-              <input id="n-systems" placeholder="Next concrete action." />
-              <label>Risk</label>
-              <input id="r-systems" placeholder="What breaks if ignored." />
-              <label>Signal</label>
-              <select id="s-systems">
-                <option value="green">GREEN</option>
-                <option value="yellow">YELLOW</option>
-                <option value="red">RED</option>
-              </select>
-            </div>
-          </details>
+            </details>
 
-          <details class="stack">
-            <summary>
-              <div class="stack-title">
-                <div class="name">Haven Security</div>
-                <div class="desc">Physical, digital, nervous-system protection.</div>
+            <details class="stack" data-acc="work">
+              <summary>
+                <div class="stack-title">
+                  <div class="name">Haven Security</div>
+                  <div class="desc">Physical, digital, nervous-system protection.</div>
+                </div>
+                <div class="stack-right">
+                  <div class="sig" id="sig-security" data-s="green"><i></i><span>GREEN</span></div>
+                  <div class="chev" aria-hidden="true"></div>
+                </div>
+              </summary>
+              <div class="stack-body">
+                <div class="grid2">
+                  <div><label>Purpose</label><textarea id="p-security"></textarea></div>
+                  <div><label>Now</label><textarea id="n-security"></textarea></div>
+                </div>
+                <div class="grid2">
+                  <div><label>Risk</label><textarea id="r-security"></textarea></div>
+                  <div>
+                    <label>Signal</label>
+                    <select id="s-security">
+                      <option value="green">GREEN</option>
+                      <option value="yellow">YELLOW</option>
+                      <option value="red">RED</option>
+                    </select>
+                  </div>
+                </div>
               </div>
-              <div class="stack-right">
-                <div class="sig" id="sig-security" data-s="green"><i></i><span>Signal</span></div>
-                <div class="chev" aria-hidden="true"></div>
-              </div>
-            </summary>
-            <div class="stack-body">
-              <label>Purpose</label>
-              <input id="p-security" placeholder="Why this exists." />
-              <label>Now</label>
-              <input id="n-security" placeholder="Next concrete action." />
-              <label>Risk</label>
-              <input id="r-security" placeholder="What breaks if ignored." />
-              <label>Signal</label>
-              <select id="s-security">
-                <option value="green">GREEN</option>
-                <option value="yellow">YELLOW</option>
-                <option value="red">RED</option>
-              </select>
-            </div>
-          </details>
+            </details>
 
-          <details class="stack">
-            <summary>
-              <div class="stack-title">
-                <div class="name">Haven Studio</div>
-                <div class="desc">Lemon Pie + Hometown textile process paintings.</div>
+            <!-- PAINTING (explicit) -->
+            <details class="stack" data-acc="work">
+              <summary>
+                <div class="stack-title">
+                  <div class="name">Painting</div>
+                  <div class="desc">Lemon Pie + hometown textile manufacturing process series.</div>
+                </div>
+                <div class="stack-right">
+                  <div class="sig" id="sig-painting" data-s="green"><i></i><span>GREEN</span></div>
+                  <div class="chev" aria-hidden="true"></div>
+                </div>
+              </summary>
+              <div class="stack-body">
+                <div class="grid2">
+                  <div><label>Lemon Pie — now</label><textarea id="n-lemon" placeholder="Next stroke / next study."></textarea></div>
+                  <div><label>Textile series — now</label><textarea id="n-textile" placeholder="Next process-study on canvas."></textarea></div>
+                </div>
+                <div class="grid2">
+                  <div><label>Cadence</label><textarea id="p-painting" placeholder="Weekly rhythm: 1–2 Lemon Pie studies + 1 textile process study."></textarea></div>
+                  <div>
+                    <label>Signal</label>
+                    <select id="s-painting">
+                      <option value="green">GREEN</option>
+                      <option value="yellow">YELLOW</option>
+                      <option value="red">RED</option>
+                    </select>
+                    <label>Risk</label>
+                    <textarea id="r-painting" placeholder="What breaks if painting is neglected."></textarea>
+                  </div>
+                </div>
               </div>
-              <div class="stack-right">
-                <div class="sig" id="sig-studio" data-s="green"><i></i><span>Signal</span></div>
-                <div class="chev" aria-hidden="true"></div>
-              </div>
-            </summary>
-            <div class="stack-body">
-              <label>Purpose</label>
-              <input id="p-studio" placeholder="Why this exists." />
-              <label>Now</label>
-              <input id="n-studio" placeholder="Next concrete action." />
-              <label>Risk</label>
-              <input id="r-studio" placeholder="What breaks if ignored." />
-              <label>Signal</label>
-              <select id="s-studio">
-                <option value="green">GREEN</option>
-                <option value="yellow">YELLOW</option>
-                <option value="red">RED</option>
-              </select>
-            </div>
-          </details>
+            </details>
 
-          <details class="stack">
-            <summary>
-              <div class="stack-title">
-                <div class="name">Haven Institute</div>
-                <div class="desc">Study + formation (listening, mentors, notes).</div>
+            <details class="stack" data-acc="work">
+              <summary>
+                <div class="stack-title">
+                  <div class="name">Haven Institute</div>
+                  <div class="desc">Study + formation (listening, mentors, notes).</div>
+                </div>
+                <div class="stack-right">
+                  <div class="sig" id="sig-institute" data-s="green"><i></i><span>GREEN</span></div>
+                  <div class="chev" aria-hidden="true"></div>
+                </div>
+              </summary>
+              <div class="stack-body">
+                <div class="grid2">
+                  <div><label>Purpose</label><textarea id="p-institute"></textarea></div>
+                  <div><label>Now</label><textarea id="n-institute"></textarea></div>
+                </div>
+                <div class="grid2">
+                  <div><label>Risk</label><textarea id="r-institute"></textarea></div>
+                  <div>
+                    <label>Signal</label>
+                    <select id="s-institute">
+                      <option value="green">GREEN</option>
+                      <option value="yellow">YELLOW</option>
+                      <option value="red">RED</option>
+                    </select>
+                  </div>
+                </div>
               </div>
-              <div class="stack-right">
-                <div class="sig" id="sig-institute" data-s="green"><i></i><span>Signal</span></div>
-                <div class="chev" aria-hidden="true"></div>
-              </div>
-            </summary>
-            <div class="stack-body">
-              <label>Purpose</label>
-              <input id="p-institute" placeholder="Why this exists." />
-              <label>Now</label>
-              <input id="n-institute" placeholder="Next concrete action." />
-              <label>Risk</label>
-              <input id="r-institute" placeholder="What breaks if ignored." />
-              <label>Signal</label>
-              <select id="s-institute">
-                <option value="green">GREEN</option>
-                <option value="yellow">YELLOW</option>
-                <option value="red">RED</option>
-              </select>
-            </div>
-          </details>
+            </details>
 
-          <details class="stack">
-            <summary>
-              <div class="stack-title">
-                <div class="name">Curriculum</div>
-                <div class="desc">Ignition → Glide → Create (daily practice).</div>
+            <details class="stack" data-acc="work">
+              <summary>
+                <div class="stack-title">
+                  <div class="name">Curriculum</div>
+                  <div class="desc">Ignition → Glide → Create (daily practice).</div>
+                </div>
+                <div class="stack-right">
+                  <div class="sig" id="sig-curriculum" data-s="green"><i></i><span>GREEN</span></div>
+                  <div class="chev" aria-hidden="true"></div>
+                </div>
+              </summary>
+              <div class="stack-body">
+                <div class="grid2">
+                  <div><label>Purpose</label><textarea id="p-curriculum"></textarea></div>
+                  <div><label>Now</label><textarea id="n-curriculum"></textarea></div>
+                </div>
+                <div class="grid2">
+                  <div><label>Risk</label><textarea id="r-curriculum"></textarea></div>
+                  <div>
+                    <label>Signal</label>
+                    <select id="s-curriculum">
+                      <option value="green">GREEN</option>
+                      <option value="yellow">YELLOW</option>
+                      <option value="red">RED</option>
+                    </select>
+                  </div>
+                </div>
               </div>
-              <div class="stack-right">
-                <div class="sig" id="sig-curriculum" data-s="green"><i></i><span>Signal</span></div>
-                <div class="chev" aria-hidden="true"></div>
-              </div>
-            </summary>
-            <div class="stack-body">
-              <label>Purpose</label>
-              <input id="p-curriculum" placeholder="Why this exists." />
-              <label>Now</label>
-              <input id="n-curriculum" placeholder="Next concrete action." />
-              <label>Risk</label>
-              <input id="r-curriculum" placeholder="What breaks if ignored." />
-              <label>Signal</label>
-              <select id="s-curriculum">
-                <option value="green">GREEN</option>
-                <option value="yellow">YELLOW</option>
-                <option value="red">RED</option>
-              </select>
-            </div>
-          </details>
+            </details>
+          </div>
 
           <div class="body">
             <div class="btnbar">
@@ -639,10 +695,10 @@
           </div>
         </section>
 
-        <!-- LIFE PANEL -->
-        <section class="section card" id="life" style="display:none;">
+        <!-- LIFE -->
+        <section class="section card" id="life">
           <div class="cap">
-            <h2>Life Stack</h2>
+            <h2>Life</h2>
             <div class="tag">Home · Money · People</div>
           </div>
           <div class="body">
@@ -666,42 +722,28 @@
           </div>
         </section>
 
-        <!-- BODY PANEL -->
-        <section class="section card" id="body" style="display:none;">
+        <!-- BODY -->
+        <section class="section card" id="body">
           <div class="cap">
             <h2>Body</h2>
             <div class="tag">Wattage · Sleep · Movement · Food</div>
           </div>
           <div class="body">
             <div class="grid2">
-              <div>
-                <label for="sleepLine">Sleep (last night)</label>
-                <input id="sleepLine" placeholder="Hours + quality (plain)" />
-              </div>
-              <div>
-                <label for="moveLine">Movement (today)</label>
-                <input id="moveLine" placeholder="Walk / lift / stretch / none" />
-              </div>
-              <div>
-                <label for="foodLine">Food (simple)</label>
-                <input id="foodLine" placeholder="What keeps you steady." />
-              </div>
-              <div>
-                <label for="wattLine">Wattage (0–10)</label>
-                <input id="wattLine" placeholder="e.g., 7 — clear" />
-              </div>
+              <div><label for="sleepLine">Sleep (last night)</label><input id="sleepLine" placeholder="Hours + quality"/></div>
+              <div><label for="moveLine">Movement (today)</label><input id="moveLine" placeholder="Walk / lift / stretch"/></div>
+              <div><label for="foodLine">Food (simple)</label><input id="foodLine" placeholder="What keeps you steady"/></div>
+              <div><label for="wattLine">Wattage (0–10)</label><input id="wattLine" placeholder="e.g., 7 — clear"/></div>
             </div>
-
             <div class="help">Rule: protect wattage before you demand output.</div>
-
             <div class="btnbar">
               <button class="btn primary" id="saveBody">Save Body</button>
             </div>
           </div>
         </section>
 
-        <!-- ARCHIVE PANEL -->
-        <section class="section card" id="archive" style="display:none;">
+        <!-- ARCHIVE -->
+        <section class="section card" id="archive">
           <div class="cap">
             <h2>Archive</h2>
             <div class="tag">Decisions · Truths · Completed</div>
@@ -728,7 +770,7 @@
         </section>
       </div>
 
-      <!-- RIGHT COLUMN: THE DAY -->
+      <!-- RIGHT COLUMN: TODAY -->
       <aside class="card day">
         <div class="cap">
           <h2>Today</h2>
@@ -746,9 +788,7 @@
           <h3>One act of rest</h3>
           <input id="dayRest" placeholder="What restores wattage?" />
 
-          <div class="help">
-            If you stall: clean a surface, write one paragraph, send one message.
-          </div>
+          <div class="help">If you stall: clean a surface, write one paragraph, send one message.</div>
 
           <div class="btnbar">
             <button class="btn primary" id="saveDay">Save Day</button>
@@ -764,13 +804,9 @@
   </div>
 
   <script>
-    /* -----------------------------
-       Haven View — Monk Mode
-       LocalStorage-based persistence
-    ------------------------------*/
-
+    /* Haven View — Monk Mode v2.1 (localStorage) */
     const $ = (id)=>document.getElementById(id);
-    const storeKey = "haven_view_monk_v2";
+    const storeKey = "haven_view_monk_v21";
 
     const defaults = {
       status:"green",
@@ -779,32 +815,19 @@
       win:"",
       not:"",
       day:{build:"", care:"", rest:""},
+      year:{ objectives:"", focus:"", exclusions:"", money:"", btc:"", output:"" },
+      weekly:{ top3:"", metrics:"", plan:"" },
       life:{home:"", money:"", person:""},
       body:{sleep:"", move:"", food:"", watt:""},
       work:{
         systems:{p:"Legal, financial, and operational spine.", n:"", r:"", s:"green"},
         security:{p:"Protect inputs, boundaries, and nervous system.", n:"", r:"", s:"green"},
-        studio:{p:"Painting practice + body of work.", n:"", r:"", s:"green"},
+        painting:{ cadence:"Weekly: 1–2 Lemon Pie studies + 1 textile process study.", lemonNow:"", textileNow:"", risk:"", s:"green" },
         institute:{p:"Study that changes the nervous system.", n:"", r:"", s:"green"},
         curriculum:{p:"Daily practice: Ignition → Glide → Create.", n:"", r:"", s:"green"},
       },
       log:[]
     };
-
-    function load(){
-      try{
-        const raw = localStorage.getItem(storeKey);
-        if(!raw) return structuredClone(defaults);
-        const parsed = JSON.parse(raw);
-        return deepMerge(structuredClone(defaults), parsed);
-      }catch(e){
-        return structuredClone(defaults);
-      }
-    }
-
-    function save(state){
-      localStorage.setItem(storeKey, JSON.stringify(state));
-    }
 
     function deepMerge(base, incoming){
       for(const k in incoming){
@@ -816,111 +839,62 @@
       }
       return base;
     }
+    function load(){
+      try{
+        const raw = localStorage.getItem(storeKey);
+        if(!raw) return structuredClone(defaults);
+        return deepMerge(structuredClone(defaults), JSON.parse(raw));
+      }catch(e){ return structuredClone(defaults); }
+    }
+    function save(){ localStorage.setItem(storeKey, JSON.stringify(state)); }
 
     let state = load();
 
-    // Date display
+    // Date
     const now = new Date();
     const fmt = new Intl.DateTimeFormat(undefined, { weekday:"short", month:"short", day:"numeric" });
     $("todayDate").textContent = fmt.format(now);
 
-    // Navigation
+    // Nav
     const navBtns = document.querySelectorAll(".navbtn");
     const sections = document.querySelectorAll(".section");
     function showTab(id){
-      sections.forEach(s => s.style.display = (s.id === id ? "block" : "none"));
+      sections.forEach(s => s.classList.toggle("active", s.id === id));
       navBtns.forEach(b => b.setAttribute("aria-selected", b.dataset.tab === id ? "true" : "false"));
-      // Keep calm on mobile: no aggressive scrolling.
       window.scrollTo({top:0, behavior:"smooth"});
     }
     navBtns.forEach(b => b.addEventListener("click", ()=>showTab(b.dataset.tab)));
 
-    // Status dot style
+    // Status dot
     function paintStatusDot(v){
       const dot = $("statusDot");
       dot.style.background = v === "green" ? "var(--accent)" : (v === "yellow" ? "var(--warn)" : "var(--danger)");
     }
-
-    // Work signal pills
     function paintSig(id, v){
       const el = $(id);
       el.dataset.s = v;
       el.querySelector("span").textContent = v.toUpperCase();
     }
 
-    // Render + bind
-    function hydrate(){
-      $("statusSelect").value = state.status;
-      $("stateSelect").value = state.state;
-      paintStatusDot(state.status);
+    // Accordion: only one open in Work stack
+    document.querySelectorAll('details[data-acc="work"]').forEach(d=>{
+      d.addEventListener("toggle", ()=>{
+        if(!d.open) return;
+        document.querySelectorAll('details[data-acc="work"]').forEach(o=>{
+          if(o !== d) o.open = false;
+        });
+      });
+    });
 
-      $("seasonLine").value = state.season || "";
-      $("winLine").value = state.win || "";
-      $("notLine").value = state.not || "";
-
-      $("dayBuild").value = state.day.build || "";
-      $("dayCare").value = state.day.care || "";
-      $("dayRest").value = state.day.rest || "";
-
-      $("homeLine").value = state.life.home || "";
-      $("moneyLine").value = state.life.money || "";
-      $("personLine").value = state.life.person || "";
-
-      $("sleepLine").value = state.body.sleep || "";
-      $("moveLine").value = state.body.move || "";
-      $("foodLine").value = state.body.food || "";
-      $("wattLine").value = state.body.watt || "";
-
-      // Work fields
-      const w = state.work;
-      $("p-systems").value = w.systems.p || "";
-      $("n-systems").value = w.systems.n || "";
-      $("r-systems").value = w.systems.r || "";
-      $("s-systems").value = w.systems.s || "green";
-      paintSig("sig-systems", w.systems.s || "green");
-
-      $("p-security").value = w.security.p || "";
-      $("n-security").value = w.security.n || "";
-      $("r-security").value = w.security.r || "";
-      $("s-security").value = w.security.s || "green";
-      paintSig("sig-security", w.security.s || "green");
-
-      $("p-studio").value = w.studio.p || "";
-      $("n-studio").value = w.studio.n || "";
-      $("r-studio").value = w.studio.r || "";
-      $("s-studio").value = w.studio.s || "green";
-      paintSig("sig-studio", w.studio.s || "green");
-
-      $("p-institute").value = w.institute.p || "";
-      $("n-institute").value = w.institute.n || "";
-      $("r-institute").value = w.institute.r || "";
-      $("s-institute").value = w.institute.s || "green";
-      paintSig("sig-institute", w.institute.s || "green");
-
-      $("p-curriculum").value = w.curriculum.p || "";
-      $("n-curriculum").value = w.curriculum.n || "";
-      $("r-curriculum").value = w.curriculum.r || "";
-      $("s-curriculum").value = w.curriculum.s || "green";
-      paintSig("sig-curriculum", w.curriculum.s || "green");
-
-      renderLog();
-      renderIntegrity();
+    // Render log
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
     }
-
-    function renderIntegrity(){
-      const warnings = [];
-      if(!state.win.trim()) warnings.push("WIN is empty.");
-      if(!state.day.build.trim()) warnings.push("Today: Build is empty.");
-      if(state.status === "red") warnings.push("Status is RED — reduce scope, protect rest.");
-      if(state.body.watt && String(state.body.watt).includes("0")) warnings.push("Wattage looks low — guard output.");
-      const el = $("integrity");
-      if(!warnings.length){
-        el.innerHTML = `<div class="mono" style="color:var(--accent)">GREEN — aligned.</div>`;
-      }else{
-        el.innerHTML = warnings.map(w=>`<div class="dangerline">${w}</div>`).join("");
-      }
-    }
-
     function renderLog(){
       const box = $("logList");
       const items = state.log || [];
@@ -940,91 +914,181 @@
         btn.addEventListener("click", ()=>{
           const i = Number(btn.getAttribute("data-del"));
           state.log.splice(i,1);
-          save(state);
-          renderLog();
+          save(); renderLog();
         });
       });
     }
 
-    function escapeHtml(s){
-      return String(s)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
+    function renderIntegrity(){
+      const warnings = [];
+      if(!state.win.trim()) warnings.push("WIN is empty.");
+      if(!state.day.build.trim()) warnings.push("Today: Build is empty.");
+      if(state.status === "red") warnings.push("Status is RED — reduce scope, protect rest.");
+      const el = $("integrity");
+      if(!warnings.length){
+        el.innerHTML = `<div class="mono" style="color:var(--accent)">GREEN — aligned.</div>`;
+      }else{
+        el.innerHTML = warnings.map(w=>`<div class="dangerline">${escapeHtml(w)}</div>`).join("");
+      }
     }
 
-    // Global changes
+    // Hydrate fields
+    function hydrate(){
+      $("statusSelect").value = state.status;
+      $("stateSelect").value = state.state;
+      paintStatusDot(state.status);
+
+      $("seasonLine").value = state.season || "";
+      $("winLine").value = state.win || "";
+      $("notLine").value = state.not || "";
+
+      $("dayBuild").value = state.day.build || "";
+      $("dayCare").value = state.day.care || "";
+      $("dayRest").value = state.day.rest || "";
+
+      $("yearObjectives").value = state.year.objectives || "";
+      $("yearFocus").value = state.year.focus || "";
+      $("yearExclusions").value = state.year.exclusions || "";
+      $("yearMoney").value = state.year.money || "";
+      $("yearBTC").value = state.year.btc || "";
+      $("yearOutput").value = state.year.output || "";
+
+      $("weekTop3").value = state.weekly.top3 || "";
+      $("weekMetrics").value = state.weekly.metrics || "";
+      $("weekPlan").value = state.weekly.plan || "";
+
+      $("homeLine").value = state.life.home || "";
+      $("moneyLine").value = state.life.money || "";
+      $("personLine").value = state.life.person || "";
+
+      $("sleepLine").value = state.body.sleep || "";
+      $("moveLine").value = state.body.move || "";
+      $("foodLine").value = state.body.food || "";
+      $("wattLine").value = state.body.watt || "";
+
+      // Work
+      const w = state.work;
+      $("p-systems").value = w.systems.p || "";
+      $("n-systems").value = w.systems.n || "";
+      $("r-systems").value = w.systems.r || "";
+      $("s-systems").value = w.systems.s || "green";
+      paintSig("sig-systems", w.systems.s || "green");
+
+      $("p-security").value = w.security.p || "";
+      $("n-security").value = w.security.n || "";
+      $("r-security").value = w.security.r || "";
+      $("s-security").value = w.security.s || "green";
+      paintSig("sig-security", w.security.s || "green");
+
+      $("n-lemon").value = w.painting.lemonNow || "";
+      $("n-textile").value = w.painting.textileNow || "";
+      $("p-painting").value = w.painting.cadence || "";
+      $("r-painting").value = w.painting.risk || "";
+      $("s-painting").value = w.painting.s || "green";
+      paintSig("sig-painting", w.painting.s || "green");
+
+      $("p-institute").value = w.institute.p || "";
+      $("n-institute").value = w.institute.n || "";
+      $("r-institute").value = w.institute.r || "";
+      $("s-institute").value = w.institute.s || "green";
+      paintSig("sig-institute", w.institute.s || "green");
+
+      $("p-curriculum").value = w.curriculum.p || "";
+      $("n-curriculum").value = w.curriculum.n || "";
+      $("r-curriculum").value = w.curriculum.r || "";
+      $("s-curriculum").value = w.curriculum.s || "green";
+      paintSig("sig-curriculum", w.curriculum.s || "green");
+
+      renderLog();
+      renderIntegrity();
+    }
+
+    // Global status/state
     $("statusSelect").addEventListener("change", (e)=>{
       state.status = e.target.value;
       paintStatusDot(state.status);
-      save(state);
-      renderIntegrity();
+      save(); renderIntegrity();
     });
     $("stateSelect").addEventListener("change", (e)=>{
       state.state = e.target.value;
-      save(state);
+      save();
     });
 
-    // Save groups
-    $("saveAll").addEventListener("click", ()=>{
+    // Save handlers
+    $("saveOrientation").addEventListener("click", ()=>{
       state.season = $("seasonLine").value;
       state.win = $("winLine").value;
       state.not = $("notLine").value;
-      save(state);
-      renderIntegrity();
+      save(); renderIntegrity();
     });
-
-    $("clearAll").addEventListener("click", ()=>{
+    $("clearOrientation").addEventListener("click", ()=>{
       if(!confirm("Clear Orientation fields?")) return;
-      $("seasonLine").value = "";
-      $("winLine").value = "";
-      $("notLine").value = "";
-      state.season = ""; state.win = ""; state.not = "";
-      save(state);
-      renderIntegrity();
+      $("seasonLine").value=""; $("winLine").value=""; $("notLine").value="";
+      state.season=""; state.win=""; state.not="";
+      save(); renderIntegrity();
     });
 
-    function readWorkBlock(key){
-      return {
-        p: $(`p-${key}`).value,
-        n: $(`n-${key}`).value,
-        r: $(`r-${key}`).value,
-        s: $(`s-${key}`).value
-      };
-    }
+    $("saveYear").addEventListener("click", ()=>{
+      state.year.objectives = $("yearObjectives").value;
+      state.year.focus = $("yearFocus").value;
+      state.year.exclusions = $("yearExclusions").value;
+      state.year.money = $("yearMoney").value;
+      state.year.btc = $("yearBTC").value;
+      state.year.output = $("yearOutput").value;
+      save();
+    });
 
-    function bindWorkSignal(key, sigId){
-      $(`s-${key}`).addEventListener("change", (e)=>{
-        state.work[key].s = e.target.value;
+    $("saveWeekly").addEventListener("click", ()=>{
+      state.weekly.top3 = $("weekTop3").value;
+      state.weekly.metrics = $("weekMetrics").value;
+      state.weekly.plan = $("weekPlan").value;
+      save();
+    });
+
+    function bindWorkSignal(selectId, sigId, pathSetter){
+      $(selectId).addEventListener("change", (e)=>{
+        pathSetter(e.target.value);
         paintSig(sigId, e.target.value);
-        save(state);
-        renderIntegrity();
+        save(); renderIntegrity();
       });
     }
 
-    $("saveWork").addEventListener("click", ()=>{
-      state.work.systems   = readWorkBlock("systems");
-      state.work.security  = readWorkBlock("security");
-      state.work.studio    = readWorkBlock("studio");
-      state.work.institute = readWorkBlock("institute");
-      state.work.curriculum= readWorkBlock("curriculum");
-      save(state);
-      renderIntegrity();
-    });
+    bindWorkSignal("s-systems","sig-systems", (v)=>state.work.systems.s=v);
+    bindWorkSignal("s-security","sig-security", (v)=>state.work.security.s=v);
+    bindWorkSignal("s-painting","sig-painting", (v)=>state.work.painting.s=v);
+    bindWorkSignal("s-institute","sig-institute", (v)=>state.work.institute.s=v);
+    bindWorkSignal("s-curriculum","sig-curriculum", (v)=>state.work.curriculum.s=v);
 
-    bindWorkSignal("systems","sig-systems");
-    bindWorkSignal("security","sig-security");
-    bindWorkSignal("studio","sig-studio");
-    bindWorkSignal("institute","sig-institute");
-    bindWorkSignal("curriculum","sig-curriculum");
+    $("saveWork").addEventListener("click", ()=>{
+      state.work.systems.p = $("p-systems").value;
+      state.work.systems.n = $("n-systems").value;
+      state.work.systems.r = $("r-systems").value;
+
+      state.work.security.p = $("p-security").value;
+      state.work.security.n = $("n-security").value;
+      state.work.security.r = $("r-security").value;
+
+      state.work.painting.lemonNow = $("n-lemon").value;
+      state.work.painting.textileNow = $("n-textile").value;
+      state.work.painting.cadence = $("p-painting").value;
+      state.work.painting.risk = $("r-painting").value;
+
+      state.work.institute.p = $("p-institute").value;
+      state.work.institute.n = $("n-institute").value;
+      state.work.institute.r = $("r-institute").value;
+
+      state.work.curriculum.p = $("p-curriculum").value;
+      state.work.curriculum.n = $("n-curriculum").value;
+      state.work.curriculum.r = $("r-curriculum").value;
+
+      save(); renderIntegrity();
+    });
 
     $("saveLife").addEventListener("click", ()=>{
       state.life.home = $("homeLine").value;
       state.life.money = $("moneyLine").value;
       state.life.person = $("personLine").value;
-      save(state);
+      save();
     });
 
     $("saveBody").addEventListener("click", ()=>{
@@ -1032,16 +1096,14 @@
       state.body.move = $("moveLine").value;
       state.body.food = $("foodLine").value;
       state.body.watt = $("wattLine").value;
-      save(state);
-      renderIntegrity();
+      save(); renderIntegrity();
     });
 
     $("saveDay").addEventListener("click", ()=>{
       state.day.build = $("dayBuild").value;
       state.day.care = $("dayCare").value;
       state.day.rest = $("dayRest").value;
-      save(state);
-      renderIntegrity();
+      save(); renderIntegrity();
     });
 
     // Log
@@ -1051,18 +1113,14 @@
       if(!text) return;
       state.log.unshift({type, text});
       $("logText").value = "";
-      save(state);
-      renderLog();
+      save(); renderLog();
     });
-
     $("clearLog").addEventListener("click", ()=>{
       if(!confirm("Clear all log entries?")) return;
       state.log = [];
-      save(state);
-      renderLog();
+      save(); renderLog();
     });
 
-    // Init
     hydrate();
   </script>
 </body>
