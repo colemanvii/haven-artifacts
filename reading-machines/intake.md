@@ -1,9 +1,7 @@
-# INTAKE
+# Intake
 
-Paste raw text here.
-No editing.
-No formatting.
-No thinking.
+Intake is the airlock.
 
-Date + Source at top.
-Then paste.
+Text does not get read on the web.
+Text is captured first.
+Only then does reading begin.
