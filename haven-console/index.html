@@ -1,17 +1,17 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-skin="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Haven Console</title>
   <meta name="color-scheme" content="light dark" />
   <style>
-    /* ---------- Base ---------- */
     :root{
       --radius: 18px;
-      --pad: 22px;
-      --max: 1040px;
+      --pad: 18px;
+      --max: 1180px;
 
+      /* Dark (default) */
       --bg: #0b0f0c;
       --bg2:#0f1511;
       --card:#0f1511cc;
@@ -23,13 +23,16 @@
 
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      --shadow: 0 10px 40px rgba(0,0,0,.35);
-      --glow: radial-gradient(900px 600px at 22% 18%, rgba(126,242,182,.12) 0%, transparent 55%),
-              radial-gradient(900px 600px at 75% 55%, rgba(255,211,122,.08) 0%, transparent 60%);
+
+      --shadow: 0 12px 44px rgba(0,0,0,.35);
+      --glow: radial-gradient(900px 600px at 20% 16%, rgba(126,242,182,.12) 0%, transparent 55%),
+              radial-gradient(900px 600px at 78% 58%, rgba(255,211,122,.08) 0%, transparent 60%);
       --noise: none;
+      --chip: rgba(255,255,255,.04);
+      --chip2: rgba(255,255,255,.03);
     }
 
-    /* ---------- Skins ---------- */
+    /* Monk / whisper skin */
     html[data-skin="monk"]{
       --bg: #f7f5ef;
       --bg2:#ffffff;
@@ -42,19 +45,15 @@
       --shadow: 0 18px 50px rgba(20,23,21,.10);
       --glow: radial-gradient(900px 600px at 22% 18%, rgba(47,111,80,.10) 0%, transparent 55%),
               radial-gradient(900px 600px at 75% 55%, rgba(138,90,18,.08) 0%, transparent 60%);
+      --chip: rgba(0,0,0,.03);
+      --chip2: rgba(0,0,0,.025);
       --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.06'/%3E%3C/svg%3E");
     }
 
-    html[data-skin="dark"]{
-      /* same as :root defaults */
-    }
-
-    /* ---------- Layout ---------- */
     *{ box-sizing:border-box; }
     body{
       margin:0;
       font-family: var(--sans);
-      letter-spacing: .2px;
       color: var(--text);
       background:
         var(--glow),
@@ -69,30 +68,20 @@
       mix-blend-mode:multiply;
       opacity:.85;
     }
-    .wrap{
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 30px 18px 60px;
-      position:relative;
-    }
+
+    .wrap{ max-width: var(--max); margin:0 auto; padding: 26px 16px 60px; position:relative; }
+
     .topbar{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:16px;
-      margin-bottom: 18px;
+      display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom: 14px;
     }
     .brand{
-      display:flex;
-      flex-direction:column;
-      gap:6px;
+      flex: 1;
       padding: 18px 18px 16px;
       border-radius: var(--radius);
       background: var(--card);
       border: 1px solid var(--line);
       box-shadow: var(--shadow);
       backdrop-filter: blur(10px);
-      min-width: 320px;
     }
     .kicker{
       font-family: var(--mono);
@@ -100,30 +89,31 @@
       letter-spacing: 2px;
       text-transform: uppercase;
       color: var(--muted);
+      margin-bottom: 6px;
     }
     h1{
       margin:0;
-      font-size: 28px;
+      font-size: 26px;
       line-height:1.15;
-      font-weight: 680;
+      font-weight: 700;
       letter-spacing:.2px;
     }
     .sub{
       color: var(--muted);
       font-size: 13px;
       line-height:1.4;
+      margin-top: 6px;
     }
 
     .controls{
-      display:flex;
-      align-items:center;
-      gap:12px;
+      display:flex; align-items:center; gap:10px;
       padding: 14px 14px;
       border-radius: var(--radius);
       background: var(--card);
       border: 1px solid var(--line);
       box-shadow: var(--shadow);
       backdrop-filter: blur(10px);
+      flex: 0 0 auto;
     }
     .label{
       font-family: var(--mono);
@@ -134,23 +124,14 @@
       white-space:nowrap;
     }
 
-    /* Toggle */
-    .toggle{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      user-select:none;
-    }
     .switch{
       width: 54px; height: 30px;
       border-radius: 999px;
       border: 1px solid var(--line);
-      background: rgba(255,255,255,.06);
+      background: var(--chip);
       position:relative;
       cursor:pointer;
-      box-shadow: inset 0 0 0 1px rgba(0,0,0,.04);
     }
-    html[data-skin="monk"] .switch{ background: rgba(0,0,0,.03); }
     .knob{
       width: 24px; height: 24px;
       border-radius: 999px;
@@ -161,21 +142,28 @@
       transition: left .18s ease;
     }
     .switch[data-on="1"] .knob{ left: 27px; }
-    .hint{
-      font-size: 12px;
-      color: var(--muted);
-    }
 
-    /* Grid */
+    .btn{
+      border: 1px solid var(--line);
+      background: var(--chip);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 9px 12px;
+      font-size: 12px;
+      font-family: var(--mono);
+      letter-spacing: 1px;
+      cursor:pointer;
+    }
+    .btn:hover{ filter: brightness(1.05); }
+
     .grid{
       display:grid;
-      grid-template-columns: 1.15fr .85fr;
-      gap: 16px;
-      margin-top: 14px;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 14px;
+      margin-top: 12px;
     }
-    @media (max-width: 900px){
+    @media (max-width: 980px){
       .topbar{ flex-direction:column; }
-      .brand{ min-width: unset; width:100%; }
       .controls{ width:100%; justify-content:space-between; }
       .grid{ grid-template-columns: 1fr; }
     }
@@ -195,50 +183,46 @@
       letter-spacing: 2.2px;
       text-transform: uppercase;
       color: var(--muted);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
     }
-    .big{
-      font-size: 20px;
-      line-height:1.25;
-      font-weight: 650;
-      margin: 0 0 6px;
-    }
-    .small{
-      font-size: 13px;
-      line-height:1.45;
-      color: var(--muted);
-      margin:0 0 14px;
-    }
+    .h2tools{ display:flex; gap:8px; align-items:center; }
+    .small{ font-size: 13px; color: var(--muted); line-height:1.45; margin: 0; }
 
-    .pillrow{ display:flex; gap:10px; flex-wrap:wrap; }
-    .pill{
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--text);
+    .row{ display:flex; gap:10px; flex-wrap:wrap; }
+    .chip{
       border: 1px solid var(--line);
-      background: rgba(255,255,255,.04);
+      background: var(--chip);
       padding: 10px 12px;
       border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing:.4px;
+      color: var(--text);
       max-width: 100%;
     }
-    html[data-skin="monk"] .pill{ background: rgba(0,0,0,.03); }
-    .pill strong{ color: var(--accent); font-weight: 700; }
+    .chip strong{ color: var(--accent); font-weight: 800; }
 
-    .checklist{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      margin-top: 8px;
+    .select{
+      border: 1px solid var(--line);
+      background: var(--chip);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 9px 10px;
+      font-size: 12px;
+      font-family: var(--mono);
+      letter-spacing: .6px;
+      outline:none;
+      cursor:pointer;
     }
+
+    .list{ display:flex; flex-direction:column; gap:10px; }
     .item{
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
+      display:flex; gap:10px; align-items:flex-start;
       padding: 10px 10px;
       border: 1px solid var(--line);
-      background: rgba(255,255,255,.03);
+      background: var(--chip2);
       border-radius: 14px;
     }
-    html[data-skin="monk"] .item{ background: rgba(0,0,0,.025); }
     .box{
       width:18px;height:18px;border-radius:6px;
       border:1px solid var(--line);
@@ -265,21 +249,36 @@
       border-top:0;border-left:0;
       transform: rotate(45deg);
     }
-    .itext{
-      display:flex;
-      flex-direction:column;
-      gap:2px;
+    .itext{ display:flex; flex-direction:column; gap:2px; width:100%; }
+    .itext b{ font-weight: 700; }
+    .meta{
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing:.8px;
+      color: var(--muted);
     }
-    .itext b{ font-weight:650; }
-    .tag{
+    .rightmeta{
+      margin-left:auto;
       font-family: var(--mono);
       font-size: 11px;
       color: var(--muted);
-      letter-spacing:1px;
+      white-space:nowrap;
+    }
+
+    .split{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 980px){ .split{ grid-template-columns:1fr; } }
+
+    .hr{
+      height:1px; background: var(--line); opacity:.9; margin: 12px 0;
+      border:0;
     }
 
     .footer{
-      margin-top: 18px;
+      margin-top: 16px;
       text-align:center;
       font-family: var(--mono);
       font-size: 11px;
@@ -288,240 +287,718 @@
       color: var(--muted);
       opacity:.9;
     }
-    .quote{
-      color: var(--muted);
-      text-transform:none;
-      letter-spacing:.6px;
+
+    /* Modal */
+    .modalWrap{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.5);
+      display:none;
+      align-items:center; justify-content:center;
+      padding: 18px;
+      z-index: 50;
     }
-    a{ color: var(--accent); text-decoration: none; }
-    a:hover{ text-decoration: underline; }
+    html[data-skin="monk"] .modalWrap{ background: rgba(20,23,21,.25); }
+    .modal{
+      width: min(980px, 100%);
+      border-radius: 18px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      padding: 16px;
+    }
+    .modalTop{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-bottom: 10px;
+    }
+    .textarea{
+      width:100%;
+      min-height: 360px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: var(--chip2);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.5;
+      padding: 12px;
+      outline:none;
+      resize: vertical;
+    }
+    .help{
+      font-size: 12px;
+      color: var(--muted);
+      line-height:1.45;
+      margin-top: 10px;
+    }
+    .warn{ color: var(--warn); font-weight: 700; }
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <div class="topbar">
       <div class="brand">
         <div class="kicker">HAVEN / CONSOLE</div>
-        <h1 id="todayTitle">Today — </h1>
-        <div class="sub" id="todaySub">Timezone: — • Mode: steady wattage • Law: “I do not chase. I receive.”</div>
+        <h1 id="todayTitle">Today —</h1>
+        <div class="sub" id="todaySub">Timezone: — • Law: “I do not chase. I receive.” • Rhythm: Ignition → Glide → Create</div>
+        <hr class="hr"/>
+        <div class="row" id="topChips"></div>
       </div>
 
       <div class="controls">
-        <div>
-          <div class="label">Skins</div>
-          <div class="hint">Dark ↔ Monk (airy)</div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div class="label">Company</div>
+          <select id="companySelect" class="select" aria-label="Company"></select>
         </div>
 
-        <div class="toggle" title="Toggle skin">
-          <div class="switch" id="skinSwitch" role="switch" aria-checked="false" tabindex="0" data-on="0">
-            <div class="knob"></div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div class="label">Skin</div>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <div class="switch" id="skinSwitch" role="switch" aria-checked="false" tabindex="0" data-on="0">
+              <div class="knob"></div>
+            </div>
+            <div class="label" id="skinName">Dark</div>
           </div>
-          <div class="label" id="skinName">Dark</div>
         </div>
+
+        <button class="btn" id="editBtn" title="Edit the console data">Edit</button>
       </div>
     </div>
 
     <div class="grid">
       <section class="card">
-        <h2>Top Task</h2>
-        <p class="big" contenteditable="true" spellcheck="false" data-key="topTask">
-          One clean admin win that protects wattage.
-        </p>
-        <p class="small" contenteditable="true" spellcheck="false" data-key="topTaskNote">
-          Keep it simple: do the one thing → close the loop → back to craft.
-        </p>
-        <div class="pillrow">
-          <div class="pill" contenteditable="true" spellcheck="false" data-key="targetOutcome">
-            <strong>Target outcome:</strong> loop closed + confirmation number
-          </div>
-          <div class="pill" contenteditable="true" spellcheck="false" data-key="script">
-            <strong>Script:</strong> “I’m calling about a charge. I need a refund. Can you process that now and give me a confirmation number?”
-          </div>
-        </div>
+        <h2>
+          Daily Tasks
+          <span class="h2tools">
+            <span class="meta" id="dailyCount">0/0</span>
+          </span>
+        </h2>
+        <div class="list" id="dailyList"></div>
+        <p class="small" id="dailyNote" style="margin-top:12px;"></p>
       </section>
 
       <aside class="card">
-        <h2>Daily Orientation</h2>
-        <div class="checklist" id="orientation">
-          <div class="item" data-id="ori1">
-            <div class="box" data-done="0" aria-label="toggle"></div>
-            <div class="itext">
-              <b>Ignition → Glide → Create</b>
-              <span class="tag">Start narrow, then widen.</span>
-            </div>
-          </div>
-          <div class="item" data-id="ori2">
-            <div class="box" data-done="0" aria-label="toggle"></div>
-            <div class="itext">
-              <b>Radical presence</b>
-              <span class="tag">No inner split, no performance.</span>
-            </div>
-          </div>
-          <div class="item" data-id="ori3">
-            <div class="box" data-done="0" aria-label="toggle"></div>
-            <div class="itext">
-              <b>Reset is allowed</b>
-              <span class="tag">Mercies new every morning.</span>
-            </div>
-          </div>
-        </div>
-
-        <p class="small" style="margin-top:14px">
-          <span style="color:var(--warn); font-weight:650;">Note:</span>
-          <span contenteditable="true" spellcheck="false" data-key="note">
-            Protect “creative wattage” today—one admin win, then back to craft.
-          </span>
+        <h2>Daily Routines</h2>
+        <div class="list" id="routinesList"></div>
+        <p class="small" style="margin-top:12px;">
+          <span class="warn">WIN:</span> <span id="winText"></span>
         </p>
       </aside>
 
       <section class="card">
-        <h2>Open Loops on Your Plate</h2>
-        <div class="checklist" id="loops">
-          <!-- editable loop items -->
-          <div class="item" data-id="loop1">
-            <div class="box" data-done="0" aria-label="toggle"></div>
-            <div class="itext">
-              <b contenteditable="true" spellcheck="false" data-key="loop1t">Write / shape the “Work is regulation / Flow is homeostasis” piece</b>
-              <span class="tag" contenteditable="true" spellcheck="false" data-key="loop1tag">Writing • 333 radiant words</span>
-            </div>
-          </div>
-          <div class="item" data-id="loop2">
-            <div class="box" data-done="0" aria-label="toggle"></div>
-            <div class="itext">
-              <b contenteditable="true" spellcheck="false" data-key="loop2t">Collect quotes/passages that echo this path (incl. Cormac)</b>
-              <span class="tag" contenteditable="true" spellcheck="false" data-key="loop2tag">Study</span>
-            </div>
-          </div>
-          <div class="item" data-id="loop3">
-            <div class="box" data-done="0" aria-label="toggle"></div>
-            <div class="itext">
-              <b contenteditable="true" spellcheck="false" data-key="loop3t">Orange tree drawing: emphasize the orangeness of the leaves</b>
-              <span class="tag" contenteditable="true" spellcheck="false" data-key="loop3tag">Art</span>
-            </div>
-          </div>
-        </div>
-
-        <p class="small" style="margin-top:14px" contenteditable="true" spellcheck="false" data-key="loopsFooter">
-          If you want this console to be strictly “action-only,” we can drop anything that isn’t concrete.
-        </p>
+        <h2>Projects (Active) + Next Actions</h2>
+        <div class="list" id="projectsList"></div>
       </section>
 
       <aside class="card">
-        <h2>Today’s Console Rules</h2>
-        <div class="checklist" id="rules">
-          <div class="item" data-id="rule1">
-            <div class="box" data-done="0" aria-label="toggle"></div>
-            <div class="itext">
-              <b>One-thing bias</b>
-              <span class="tag">Finish the admin loop first.</span>
-            </div>
+        <h2>Objectives</h2>
+        <div class="split">
+          <div>
+            <div class="meta" style="margin-bottom:6px;">NOW (1–2 weeks)</div>
+            <div class="list" id="objNow"></div>
           </div>
-          <div class="item" data-id="rule2">
-            <div class="box" data-done="0" aria-label="toggle"></div>
-            <div class="itext">
-              <b>Signal over spectacle</b>
-              <span class="tag">Do the real thing; skip the noise.</span>
-            </div>
-          </div>
-          <div class="item" data-id="rule3">
-            <div class="box" data-done="0" aria-label="toggle"></div>
-            <div class="itext">
-              <b>Slowly, in your own way</b>
-              <span class="tag">ゆっくりと、自分らしく</span>
-            </div>
+          <div>
+            <div class="meta" style="margin-bottom:6px;">THIS QUARTER</div>
+            <div class="list" id="objQuarter"></div>
           </div>
         </div>
+        <hr class="hr"/>
+        <div class="meta" style="margin-bottom:6px;">THIS YEAR</div>
+        <div class="list" id="objYear"></div>
+      </aside>
+
+      <section class="card">
+        <h2>Open Loops / Backlog</h2>
+        <div class="list" id="backlogList"></div>
+      </section>
+
+      <aside class="card">
+        <h2>Metrics & Signals</h2>
+        <div class="row" id="metricsChips"></div>
+        <hr class="hr"/>
+        <p class="small" id="signalsText"></p>
       </aside>
     </div>
 
     <div class="footer">
-      HAVEN SYSTEMS • <span class="quote" contenteditable="true" spellcheck="false" data-key="footerQuote">“Rest protects wattage.”</span>
+      HAVEN SYSTEMS • <span id="footerQuote">“Rest protects wattage.”</span>
     </div>
   </div>
 
-  <script>
-    // ---------- Date header ----------
-    (function initDate(){
-      const now = new Date();
-      const fmt = new Intl.DateTimeFormat(undefined, { weekday:"long", year:"numeric", month:"long", day:"numeric" });
-      document.getElementById("todayTitle").textContent = "Today — " + fmt.format(now);
-      try{
-        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
-        document.getElementById("todaySub").textContent =
-          `Timezone: ${tz} • Mode: steady wattage • Law: “I do not chase. I receive.”`;
-      }catch(e){}
-    })();
+  <!-- Edit modal -->
+  <div class="modalWrap" id="modalWrap" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Edit Console Data">
+      <div class="modalTop">
+        <div class="label">Edit Mode</div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn" id="resetBtn" title="Reset to template">Reset</button>
+          <button class="btn" id="closeBtn">Close</button>
+          <button class="btn" id="saveBtn">Save</button>
+        </div>
+      </div>
+      <textarea class="textarea" id="dataEditor" spellcheck="false"></textarea>
+      <div class="help">
+        Edit the JSON to change tasks, routines, objectives, projects, backlog, and metrics.
+        <span class="warn">Tip:</span> Keep ids unique. If you break JSON, it won’t save.
+      </div>
+    </div>
+  </div>
 
-    // ---------- Skin toggle (dark <-> monk) ----------
-    const SKIN_KEY = "haven_skin";
-    const html = document.documentElement;
-    const sw = document.getElementById("skinSwitch");
-    const skinName = document.getElementById("skinName");
+<script>
+/* =========================
+   Haven Console — Data Model
+   ========================= */
 
-    function setSkin(skin){
-      html.setAttribute("data-skin", skin);
-      const isMonk = skin === "monk";
-      sw.dataset.on = isMonk ? "1" : "0";
-      sw.setAttribute("aria-checked", String(isMonk));
-      skinName.textContent = isMonk ? "Monk" : "Dark";
-      localStorage.setItem(SKIN_KEY, skin);
+const STORAGE_KEY = "haven_console_v2";
+const DONE_KEY = "haven_done_v2";
+const SKIN_KEY = "haven_skin_v2";
+const COMPANY_KEY = "haven_company_v2";
+
+const TEMPLATE = {
+  skin: "dark",
+  footerQuote: "Rest protects wattage.",
+  law: "I do not chase. I receive.",
+  rhythm: "Ignition → Glide → Create",
+  topChips: [
+    { label:"Mode", value:"steady wattage" },
+    { label:"One admin win", value:"protects creative wattage" },
+    { label:"Signal", value:"do the real thing; skip the noise" }
+  ],
+  companies: [
+    {
+      id: "haven",
+      name: "Haven Systems",
+      dailyNote: "One clean admin win → close the loop → back to craft.",
+      win: "One clean admin win that protects wattage.",
+      dailyTasks: [
+        { id:"wells", text:"Call Wells Fargo and get refunded.", meta:"Admin • confirmation #", pinned:true },
+        { id:"console", text:"Update Haven Console (10 min) — keep it clean.", meta:"Haven • system" },
+        { id:"craft", text:"60 minutes of true craft (no phone).", meta:"Wattage • glide" }
+      ],
+      routines: [
+        { id:"morn", text:"Morning grounding (breath + water + light).", meta:"10 min" },
+        { id:"walk", text:"Walk outside / sun on eyes.", meta:"15 min" },
+        { id:"night", text:"Night Protocol NP-01: strive to enter rest.", meta:"seal" }
+      ],
+      objectives: {
+        now: [
+          { id:"now1", text:"Protect daily wattage: admin first, then glide." },
+          { id:"now2", text:"Refine the console into a living dashboard (v2)." }
+        ],
+        quarter: [
+          { id:"q1", text:"Formalize Haven Systems / Haven Global legal protection." },
+          { id:"q2", text:"Ship 2–3 invite portals (Gabe / Roosevelt / etc.)." }
+        ],
+        year: [
+          { id:"y1", text:"Build Haven into a coherent public institution (quietly)." }
+        ]
+      },
+      projects: [
+        {
+          id:"p1",
+          name:"Haven Console v2",
+          status:"Active",
+          next:"Add skins + entity switch + objectives + projects + persistence.",
+          meta:"System"
+        },
+        {
+          id:"p2",
+          name:"Invite Portal Templates",
+          status:"Queued",
+          next:"Draft 1 template with a slow-scrolling welcome message.",
+          meta:"Interface"
+        }
+      ],
+      backlog: [
+        { id:"b1", text:"Collect quotes that reinforce the Haven laws (Merton/Jung/etc.).", meta:"Study" },
+        { id:"b2", text:"Define “metrics & signals” you’ll actually track weekly.", meta:"Ops" }
+      ],
+      metrics: [
+        { label:"Wattage", value:"Protected" },
+        { label:"Sats", value:"Stacking" },
+        { label:"Craft", value:"1 true block" }
+      ],
+      signals: "If you feel scattered, you’re in too many loops. Choose one loop. Close it."
+    },
+
+    {
+      id: "colecalfee",
+      name: "Cole Calfee (Fine Art)",
+      dailyNote: "Do the smallest real studio action first. Signal over spectacle.",
+      win: "One true studio block completed.",
+      dailyTasks: [
+        { id:"studio", text:"Studio: 45–90 min painting/drawing (no performance).", meta:"Craft", pinned:true },
+        { id:"post", text:"Post one archived drawing (quiet + simple caption).", meta:"Share" }
+      ],
+      routines: [
+        { id:"drills", text:"20–30 min drawing drills.", meta:"daily" },
+        { id:"clean", text:"Reset studio surface for tomorrow.", meta:"10 min" }
+      ],
+      objectives: {
+        now: [
+          { id:"a1", text:"Build a consistent studio cadence (daily block + weekly study)." }
+        ],
+        quarter: [
+          { id:"a2", text:"Develop 1–2 bodies of work with cohesion (series logic)." }
+        ],
+        year: [
+          { id:"a3", text:"Ship a meaningful collection; grow collectors through trust." }
+        ]
+      },
+      projects: [
+        { id:"ap1", name:"Monk (photo book)", status:"Active", next:"Outline sections + gather 20 candidate images.", meta:"Book" }
+      ],
+      backlog: [
+        { id:"ab1", text:"Morandi study: subtle value + shape restraint.", meta:"Study" }
+      ],
+      metrics: [
+        { label:"Studio", value:"1 block" },
+        { label:"Posting", value:"1 archive" }
+      ],
+      signals: "If you’re tempted to over-polish, you’re avoiding the real mark. Make the mark."
+    },
+
+    {
+      id: "colem7",
+      name: "Coleman VII (Retainers)",
+      dailyNote: "Client service is calm: one clean deliverable, then done.",
+      win: "One deliverable shipped to a client.",
+      dailyTasks: [
+        { id:"inbox", text:"Check client inbox and respond to only what’s necessary.", meta:"15 min", pinned:true },
+        { id:"ship", text:"Ship one tangible artifact (draft, deck, outline, cut).", meta:"Deliverable" }
+      ],
+      routines: [
+        { id:"brief", text:"Brief yourself: What’s the ONE thing for each client?", meta:"5 min" }
+      ],
+      objectives: {
+        now: [
+          { id:"c1", text:"Standardize the retainer portal + booking flow." }
+        ],
+        quarter: [
+          { id:"c2", text:"Land 1–2 dream-tier clients through quiet proof." }
+        ],
+        year: [
+          { id:"c3", text:"Become known for cinematic brand storytelling execution." }
+        ]
+      },
+      projects: [
+        { id:"cp1", name:"Client Portal Prototype", status:"Active", next:"Draft minimal portal UI + monthly slots.", meta:"Product" }
+      ],
+      backlog: [
+        { id:"cb1", text:"Write a 1-page Coleman VII ‘promise + process’ sheet.", meta:"Ops" }
+      ],
+      metrics: [
+        { label:"Ships", value:"1/day" },
+        { label:"Clarity", value:"High" }
+      ],
+      signals: "If it’s vague, it’s not ready. Reduce scope until it’s shippable today."
+    },
+
+    {
+      id: "tangerine",
+      name: "Tangerine (Film)",
+      dailyNote: "Myth is built by small real footage + scripts, not announcements.",
+      win: "One concrete page or shot advanced.",
+      dailyTasks: [
+        { id:"page", text:"Write or revise 1 page (or 1 beat) for a film project.", meta:"Script", pinned:true },
+        { id:"shot", text:"Make one visual study (frame, storyboard, reference board).", meta:"Visual" }
+      ],
+      routines: [
+        { id:"watch", text:"Watch 10 minutes of cinema with notebook (why it works).", meta:"Study" }
+      ],
+      objectives: {
+        now: [
+          { id:"t1", text:"Move The Girl and the Machine forward in small steps." }
+        ],
+        quarter: [
+          { id:"t2", text:"Assemble a short proof-of-tone (1–2 min)."}
+        ],
+        year: [
+          { id:"t3", text:"Release a short that feels inevitable and true." }
+        ]
+      },
+      projects: [
+        { id:"tp1", name:"The Girl and the Machine (short)", status:"Active", next:"Outline emotional beats + transitions.", meta:"Film" }
+      ],
+      backlog: [
+        { id:"tb1", text:"Build a ‘Southern futurism’ reference library (5 films + 20 frames).", meta:"Research" }
+      ],
+      metrics: [
+        { label:"Pages", value:"1/day" },
+        { label:"Frames", value:"1/day" }
+      ],
+      signals: "If you’re waiting for the perfect moment, you’re delaying the first shot."
+    }
+  ]
+};
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return structuredClone(TEMPLATE);
+    const parsed = JSON.parse(raw);
+    return parsed;
+  }catch(e){
+    return structuredClone(TEMPLATE);
+  }
+}
+
+let state = loadState();
+
+let done = {};
+try { done = JSON.parse(localStorage.getItem(DONE_KEY) || "{}"); } catch(e){ done = {}; }
+
+function saveState(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function saveDone(){
+  localStorage.setItem(DONE_KEY, JSON.stringify(done));
+}
+
+function getCompany(){
+  const cid = localStorage.getItem(COMPANY_KEY) || state.companies[0].id;
+  return state.companies.find(c => c.id === cid) || state.companies[0];
+}
+
+/* =========================
+   Rendering
+   ========================= */
+
+const $ = (s)=>document.querySelector(s);
+const companySelect = $("#companySelect");
+const topChips = $("#topChips");
+const dailyList = $("#dailyList");
+const routinesList = $("#routinesList");
+const projectsList = $("#projectsList");
+const backlogList = $("#backlogList");
+const metricsChips = $("#metricsChips");
+const signalsText = $("#signalsText");
+const dailyNote = $("#dailyNote");
+const winText = $("#winText");
+const footerQuote = $("#footerQuote");
+
+const objNow = $("#objNow");
+const objQuarter = $("#objQuarter");
+const objYear = $("#objYear");
+
+const dailyCount = $("#dailyCount");
+
+function renderCompanySelect(){
+  companySelect.innerHTML = "";
+  state.companies.forEach(c=>{
+    const opt = document.createElement("option");
+    opt.value = c.id;
+    opt.textContent = c.name;
+    companySelect.appendChild(opt);
+  });
+  companySelect.value = getCompany().id;
+}
+
+function makeListItem({id, text, meta, right}, groupKey){
+  const wrap = document.createElement("div");
+  wrap.className = "item";
+  wrap.dataset.id = id;
+
+  const box = document.createElement("div");
+  box.className = "box";
+  box.dataset.done = done[groupKey+":"+id] ? "1" : "0";
+  box.title = "toggle";
+
+  const it = document.createElement("div");
+  it.className = "itext";
+
+  const b = document.createElement("b");
+  b.textContent = text || "";
+
+  const m = document.createElement("div");
+  m.className = "meta";
+  m.textContent = meta || "";
+
+  it.appendChild(b);
+  if(meta) it.appendChild(m);
+
+  wrap.appendChild(box);
+  wrap.appendChild(it);
+
+  if(right){
+    const r = document.createElement("div");
+    r.className = "rightmeta";
+    r.textContent = right;
+    wrap.appendChild(r);
+  }
+
+  box.addEventListener("click", ()=>{
+    const k = groupKey+":"+id;
+    done[k] = !done[k];
+    box.dataset.done = done[k] ? "1" : "0";
+    saveDone();
+    if(groupKey === "daily") updateDailyCount();
+  });
+
+  return wrap;
+}
+
+function makeProjectCard(p){
+  const wrap = document.createElement("div");
+  wrap.className = "item";
+  wrap.dataset.id = p.id;
+
+  const box = document.createElement("div");
+  box.className = "box";
+  box.dataset.done = done["proj:"+p.id] ? "1" : "0";
+
+  const it = document.createElement("div");
+  it.className = "itext";
+
+  const b = document.createElement("b");
+  b.textContent = p.name;
+
+  const m = document.createElement("div");
+  m.className = "meta";
+  m.textContent = `${p.status || "Active"} • ${p.meta || ""}`.trim();
+
+  const next = document.createElement("div");
+  next.className = "small";
+  next.style.marginTop = "6px";
+  next.textContent = "Next: " + (p.next || "");
+
+  it.appendChild(b);
+  it.appendChild(m);
+  it.appendChild(next);
+
+  wrap.appendChild(box);
+  wrap.appendChild(it);
+
+  box.addEventListener("click", ()=>{
+    const k = "proj:"+p.id;
+    done[k] = !done[k];
+    box.dataset.done = done[k] ? "1" : "0";
+    saveDone();
+  });
+
+  return wrap;
+}
+
+function updateDailyCount(){
+  const c = getCompany();
+  const total = c.dailyTasks.length;
+  let completed = 0;
+  c.dailyTasks.forEach(t=>{
+    if(done["daily:"+t.id]) completed++;
+  });
+  dailyCount.textContent = `${completed}/${total}`;
+}
+
+function render(){
+  // Date header
+  const now = new Date();
+  const fmt = new Intl.DateTimeFormat(undefined, { weekday:"long", year:"numeric", month:"long", day:"numeric" });
+  $("#todayTitle").textContent = "Today — " + fmt.format(now);
+  let tz = "Local";
+  try{ tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "Local"; }catch(e){}
+  $("#todaySub").textContent = `Timezone: ${tz} • Law: “${state.law}” • Rhythm: ${state.rhythm}`;
+
+  // Company
+  const c = getCompany();
+
+  // Top chips
+  topChips.innerHTML = "";
+  (state.topChips || []).forEach(ch=>{
+    const el = document.createElement("div");
+    el.className = "chip";
+    el.innerHTML = `<strong>${escapeHtml(ch.label)}:</strong> ${escapeHtml(ch.value)}`;
+    topChips.appendChild(el);
+  });
+
+  // Daily note + win
+  dailyNote.textContent = c.dailyNote || "";
+  winText.textContent = c.win || "";
+
+  // Daily tasks (pinned first)
+  dailyList.innerHTML = "";
+  const dailySorted = [...(c.dailyTasks||[])].sort((a,b)=> (b.pinned?1:0)-(a.pinned?1:0));
+  dailySorted.forEach(t=>{
+    dailyList.appendChild(makeListItem({
+      id: t.id,
+      text: t.text,
+      meta: t.meta,
+      right: t.pinned ? "PINNED" : ""
+    }, "daily"));
+  });
+  updateDailyCount();
+
+  // Routines
+  routinesList.innerHTML = "";
+  (c.routines||[]).forEach(r=>{
+    routinesList.appendChild(makeListItem({
+      id:r.id, text:r.text, meta:r.meta
+    }, "routine"));
+  });
+
+  // Objectives
+  objNow.innerHTML = "";
+  (c.objectives?.now || []).forEach(o=>{
+    objNow.appendChild(makeListItem({ id:o.id, text:o.text, meta:"" }, "objNow"));
+  });
+
+  objQuarter.innerHTML = "";
+  (c.objectives?.quarter || []).forEach(o=>{
+    objQuarter.appendChild(makeListItem({ id:o.id, text:o.text, meta:"" }, "objQuarter"));
+  });
+
+  objYear.innerHTML = "";
+  (c.objectives?.year || []).forEach(o=>{
+    objYear.appendChild(makeListItem({ id:o.id, text:o.text, meta:"" }, "objYear"));
+  });
+
+  // Projects
+  projectsList.innerHTML = "";
+  (c.projects||[]).forEach(p=>{
+    projectsList.appendChild(makeProjectCard(p));
+  });
+
+  // Backlog
+  backlogList.innerHTML = "";
+  (c.backlog||[]).forEach(b=>{
+    backlogList.appendChild(makeListItem({ id:b.id, text:b.text, meta:b.meta }, "backlog"));
+  });
+
+  // Metrics
+  metricsChips.innerHTML = "";
+  (c.metrics||[]).forEach(m=>{
+    const el = document.createElement("div");
+    el.className = "chip";
+    el.innerHTML = `<strong>${escapeHtml(m.label)}:</strong> ${escapeHtml(m.value)}`;
+    metricsChips.appendChild(el);
+  });
+
+  // Signals
+  signalsText.textContent = c.signals || "";
+
+  // Footer
+  footerQuote.textContent = state.footerQuote || "Rest protects wattage.";
+}
+
+function escapeHtml(str){
+  return String(str || "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+/* =========================
+   Skin toggle
+   ========================= */
+const skinSwitch = $("#skinSwitch");
+const skinName = $("#skinName");
+function setSkin(s){
+  document.documentElement.setAttribute("data-skin", s);
+  const isMonk = s === "monk";
+  skinSwitch.dataset.on = isMonk ? "1" : "0";
+  skinSwitch.setAttribute("aria-checked", String(isMonk));
+  skinName.textContent = isMonk ? "Monk" : "Dark";
+  localStorage.setItem(SKIN_KEY, s);
+  state.skin = s;
+  saveState();
+}
+function toggleSkin(){
+  const cur = document.documentElement.getAttribute("data-skin") || "dark";
+  setSkin(cur === "monk" ? "dark" : "monk");
+}
+skinSwitch.addEventListener("click", toggleSkin);
+skinSwitch.addEventListener("keydown", (e)=>{ if(e.key==="Enter" || e.key===" "){ e.preventDefault(); toggleSkin(); } });
+
+/* =========================
+   Company switching
+   ========================= */
+companySelect.addEventListener("change", ()=>{
+  localStorage.setItem(COMPANY_KEY, companySelect.value);
+  render();
+});
+
+/* =========================
+   Edit Mode
+   ========================= */
+const modalWrap = $("#modalWrap");
+const editor = $("#dataEditor");
+const editBtn = $("#editBtn");
+const closeBtn = $("#closeBtn");
+const saveBtn = $("#saveBtn");
+const resetBtn = $("#resetBtn");
+
+function openModal(){
+  modalWrap.style.display = "flex";
+  modalWrap.setAttribute("aria-hidden","false");
+  editor.value = JSON.stringify(state, null, 2);
+  editor.focus();
+}
+function closeModal(){
+  modalWrap.style.display = "none";
+  modalWrap.setAttribute("aria-hidden","true");
+}
+editBtn.addEventListener("click", openModal);
+closeBtn.addEventListener("click", closeModal);
+modalWrap.addEventListener("click", (e)=>{ if(e.target === modalWrap) closeModal(); });
+
+saveBtn.addEventListener("click", ()=>{
+  try{
+    const next = JSON.parse(editor.value);
+    state = next;
+    saveState();
+    renderCompanySelect();
+
+    // maintain selected company if possible
+    const current = localStorage.getItem(COMPANY_KEY) || state.companies[0]?.id;
+    if(!state.companies.find(c=>c.id===current)){
+      localStorage.setItem(COMPANY_KEY, state.companies[0]?.id || "");
     }
 
-    const savedSkin = localStorage.getItem(SKIN_KEY) || "dark";
-    setSkin(savedSkin);
+    // apply skin from state
+    setSkin(localStorage.getItem(SKIN_KEY) || state.skin || "dark");
 
-    function toggleSkin(){
-      const next = (html.getAttribute("data-skin") === "monk") ? "dark" : "monk";
-      setSkin(next);
-    }
-    sw.addEventListener("click", toggleSkin);
-    sw.addEventListener("keydown", (e)=>{ if(e.key==="Enter" || e.key===" "){ e.preventDefault(); toggleSkin(); } });
+    render();
+    closeModal();
+  }catch(err){
+    alert("JSON error — not saved. Fix formatting and try again.\n\n" + err.message);
+  }
+});
 
-    // ---------- Checklist state ----------
-    const DONE_KEY = "haven_done";
-    const done = JSON.parse(localStorage.getItem(DONE_KEY) || "{}");
+resetBtn.addEventListener("click", ()=>{
+  if(!confirm("Reset console data to template? (This overwrites your saved structure — tasks can be re-added.)")) return;
+  state = structuredClone(TEMPLATE);
+  saveState();
+  renderCompanySelect();
+  localStorage.setItem(COMPANY_KEY, state.companies[0].id);
+  setSkin(state.skin || "dark");
+  render();
+  editor.value = JSON.stringify(state, null, 2);
+});
 
-    function applyDone(){
-      document.querySelectorAll(".item").forEach(it=>{
-        const id = it.getAttribute("data-id");
-        const box = it.querySelector(".box");
-        const v = done[id] ? "1" : "0";
-        box.dataset.done = v;
-      });
-    }
-    applyDone();
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "Escape" && modalWrap.style.display === "flex") closeModal();
+});
 
-    document.addEventListener("click", (e)=>{
-      const box = e.target.closest(".box");
-      if(!box) return;
-      const item = box.closest(".item");
-      const id = item.getAttribute("data-id");
-      done[id] = !done[id];
-      localStorage.setItem(DONE_KEY, JSON.stringify(done));
-      applyDone();
-    });
+/* =========================
+   Init
+   ========================= */
+(function init(){
+  renderCompanySelect();
 
-    // ---------- Inline editable persistence ----------
-    const TEXT_KEY = "haven_text";
-    const text = JSON.parse(localStorage.getItem(TEXT_KEY) || "{}");
+  const savedSkin = localStorage.getItem(SKIN_KEY) || state.skin || "dark";
+  setSkin(savedSkin);
 
-    function loadText(){
-      document.querySelectorAll("[data-key]").forEach(el=>{
-        const k = el.getAttribute("data-key");
-        if(text[k] != null) el.textContent = text[k];
-      });
-    }
-    loadText();
+  // default company if missing
+  const savedCompany = localStorage.getItem(COMPANY_KEY);
+  if(!savedCompany || !state.companies.find(c=>c.id===savedCompany)){
+    localStorage.setItem(COMPANY_KEY, state.companies[0].id);
+  }
 
-    let saveTimer = null;
-    document.addEventListener("input", (e)=>{
-      const el = e.target.closest("[data-key]");
-      if(!el) return;
-      const k = el.getAttribute("data-key");
-      text[k] = el.textContent;
-      clearTimeout(saveTimer);
-      saveTimer = setTimeout(()=> localStorage.setItem(TEXT_KEY, JSON.stringify(text)), 150);
-    });
-  </script>
+  render();
+})();
+</script>
 </body>
 </html>
