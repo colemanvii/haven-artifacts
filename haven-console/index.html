@@ -1,1116 +1,187 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Haven Console — Monk Mode v2.1</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Haven Console — Jan 9, 2026</title>
   <style>
     :root{
-      --bg:#f4f6f7;
-      --panel:#ffffff;
-      --ink:#0f1a1f;
-      --muted:#55636b;
-      --line:#d8dde0;
-      --accent:#0b7f6c;
-      --warn:#c88a1a;
-      --danger:#b33a3a;
-      --shadow:0 10px 28px rgba(15,26,31,.08);
-      --r:18px;
-      --max:1220px;
+      --bg:#0b0f0c;
+      --panel:#0f1511;
+      --ink:#e7f2e8;
+      --muted:#a8b6ab;
+      --line:#223027;
+      --accent:#8CFFB0;
+      --warn:#FFD37A;
+      --soft:#131b16;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
     *{box-sizing:border-box}
-    html,body{height:100%}
     body{
       margin:0;
-      background:var(--bg);
+      background:radial-gradient(1200px 800px at 30% 0%, #132018 0%, var(--bg) 55%);
       color:var(--ink);
       font-family:var(--sans);
-      line-height:1.35;
-      -webkit-font-smoothing:antialiased;
-      text-rendering:optimizeLegibility;
+      letter-spacing:.2px;
     }
-
-    /* Top strip */
-    .topstrip{
-      position:sticky; top:0; z-index:20;
-      background:rgba(244,246,247,.9);
-      backdrop-filter:saturate(140%) blur(10px);
-      border-bottom:1px solid rgba(216,221,224,.75);
+    .wrap{max-width:980px;margin:0 auto;padding:28px 18px 42px}
+    header{
+      display:flex;align-items:flex-start;justify-content:space-between;gap:18px;
+      padding:16px 18px;border:1px solid var(--line);border-radius:18px;background:rgba(15,21,17,.75);
+      box-shadow:0 10px 30px rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
     }
-    .topstrip-inner{
-      max-width:var(--max);
-      margin:0 auto;
-      padding:12px 14px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-    }
-    .brand{
-      display:flex; align-items:baseline; gap:10px;
-      font-weight:900; letter-spacing:.14em; text-transform:uppercase;
-      font-size:13px;
-      white-space:nowrap;
-    }
-    .brand .sub{
+    .kicker{font-family:var(--mono);color:var(--muted);font-size:12px}
+    h1{margin:6px 0 2px;font-size:22px;font-weight:650}
+    .meta{font-family:var(--mono);font-size:12px;color:var(--muted)}
+    .badge{
       font-family:var(--mono);
-      font-weight:800;
-      letter-spacing:.1em;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(140,255,176,.12), rgba(140,255,176,.04));
+      padding:10px 12px;border-radius:14px;min-width:220px;
+    }
+    .badge .label{color:var(--muted);font-size:11px}
+    .badge .value{margin-top:6px;color:var(--accent);font-size:12px;line-height:1.35}
+    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-top:14px}
+    .card{
+      border:1px solid var(--line);
+      background:rgba(15,21,17,.72);
+      border-radius:18px;
+      padding:14px 14px 12px;
+      box-shadow:0 10px 26px rgba(0,0,0,.25);
+      backdrop-filter: blur(8px);
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:13px;
+      color:var(--muted);
+      font-family:var(--mono);
+      font-weight:600;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+    }
+    .win{
+      border:1px solid rgba(140,255,176,.22);
+      background:linear-gradient(180deg, rgba(140,255,176,.10), rgba(15,21,17,.72));
+    }
+    .win .big{
+      font-size:18px;font-weight:650;margin:2px 0 2px;
+    }
+    ul{margin:0;padding-left:18px}
+    li{margin:8px 0;color:var(--ink);line-height:1.35}
+    .muted{color:var(--muted)}
+    .tag{
+      display:inline-block;
+      font-family:var(--mono);
       font-size:11px;
       color:var(--muted);
-      text-transform:uppercase;
+      border:1px solid var(--line);
+      padding:3px 8px;
+      border-radius:999px;
+      margin-left:8px;
+      background:rgba(19,27,22,.9);
+      vertical-align:middle;
     }
-    .topmeta{
-      display:flex; align-items:center; gap:10px;
-      color:var(--muted);
-      font-size:12px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
+    .row{
+      display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px
     }
     .pill{
-      display:inline-flex; align-items:center; gap:8px;
       border:1px solid var(--line);
-      background:rgba(255,255,255,.85);
-      border-radius:999px;
-      padding:8px 10px;
-      box-shadow:0 6px 18px rgba(15,26,31,.06);
-    }
-    .dot{
-      width:10px; height:10px; border-radius:999px;
-      background:var(--accent);
-      box-shadow:0 0 0 0 rgba(11,127,108,.45);
-      animation:breathe 4.4s ease-in-out infinite;
-    }
-    @keyframes breathe{
-      0%,100%{transform:scale(1); box-shadow:0 0 0 0 rgba(11,127,108,.45)}
-      50%{transform:scale(1.08); box-shadow:0 0 0 10px rgba(11,127,108,0)}
-    }
-    .mono{font-family:var(--mono); letter-spacing:.08em; text-transform:uppercase; font-size:11px;}
-    .sep{opacity:.35}
-
-    /* App layout */
-    .app{
-      max-width:var(--max);
-      margin:0 auto;
-      padding:14px 14px 36px;
-      display:grid;
-      grid-template-columns: 250px 1fr;
-      gap:14px;
-      align-items:start;
-    }
-    @media (max-width: 980px){ .app{grid-template-columns:1fr} }
-
-    /* Sidebar */
-    .side{
-      position:sticky; top:62px;
-      align-self:start;
-      background:var(--panel);
-      border:1px solid var(--line);
-      border-radius:var(--r);
-      box-shadow:var(--shadow);
-      overflow:hidden;
-    }
-    @media (max-width: 980px){ .side{position:relative; top:auto} }
-    .side-head{
-      padding:14px 14px 10px;
-      border-bottom:1px solid var(--line);
-      display:flex; align-items:center; justify-content:space-between;
-      gap:10px;
-    }
-    .side-head .title{
-      font-weight:900;
-      letter-spacing:.18em;
-      text-transform:uppercase;
+      background:rgba(19,27,22,.9);
+      border-radius:14px;
+      padding:10px 12px;
+      flex:1 1 240px;
+      font-family:var(--mono);
       font-size:12px;
-    }
-    .side-head .ver{
-      font-family:var(--mono);
-      font-size:11px;
       color:var(--muted);
+      line-height:1.35;
     }
-    .nav{ padding:8px; display:flex; flex-direction:column; gap:6px; }
-    .nav button{
-      width:100%;
-      border:1px solid transparent;
-      background:transparent;
-      border-radius:12px;
-      padding:12px 12px;
-      text-align:left;
-      cursor:pointer;
-      display:flex; align-items:center; justify-content:space-between;
-      gap:10px;
+    .pill strong{color:var(--ink);font-weight:650}
+    .divider{height:1px;background:var(--line);margin:12px 0}
+    .small{font-size:12px;color:var(--muted);line-height:1.45}
+    .checklist{list-style:none;padding-left:0}
+    .checklist li{display:flex;gap:10px;align-items:flex-start}
+    .box{
+      width:14px;height:14px;border-radius:4px;margin-top:2px;
+      border:1px solid var(--line);background:rgba(11,15,12,.6);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
+      flex:0 0 14px;
     }
-    .nav button:hover{background:rgba(11,127,108,.06)}
-    .nav button[aria-selected="true"]{
-      background:rgba(11,127,108,.08);
-      border-color:rgba(11,127,108,.18);
-    }
-    .nav .name{
-      font-weight:900;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      font-size:12px;
-    }
-    .nav .hint{
-      font-family:var(--mono);
-      color:var(--muted);
-      font-size:10px;
-      letter-spacing:.1em;
-      text-transform:uppercase;
-    }
-
-    /* Main grid */
-    .main{
-      display:grid;
-      grid-template-columns: 1fr 380px;
-      gap:14px;
-      align-items:start;
-    }
-    @media (max-width: 980px){ .main{grid-template-columns:1fr} }
-
-    /* Cards */
-    .card{
-      background:var(--panel);
-      border:1px solid var(--line);
-      border-radius:var(--r);
-      box-shadow:var(--shadow);
-      overflow:hidden;
-    }
-    .cap{
-      padding:16px 16px 10px;
-      display:flex; align-items:flex-start; justify-content:space-between;
-      gap:10px;
-      border-bottom:1px solid rgba(216,221,224,.55);
-    }
-    .cap h2{
-      margin:0;
-      font-weight:900;
-      letter-spacing:.22em;
-      text-transform:uppercase;
-      font-size:12px;
-    }
-    .cap .tag{
-      font-family:var(--mono);
-      font-size:11px;
-      letter-spacing:.1em;
-      text-transform:uppercase;
-      color:var(--muted);
-      white-space:nowrap;
-    }
-    .body{padding:12px 16px 16px;}
-    .muted{color:var(--muted)}
-    .grid2{display:grid; grid-template-columns: 1fr 1fr; gap:10px;}
-    @media (max-width: 620px){ .grid2{grid-template-columns:1fr} }
-
-    /* Inputs */
-    input, textarea, select{
-      width:100%;
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:10px 10px;
-      font: inherit;
-      background:#fff;
-      color:var(--ink);
-      outline:none;
-    }
-    textarea{min-height:78px; resize:vertical}
-    label{
-      display:block;
-      margin:10px 0 6px;
-      font-family:var(--mono);
-      letter-spacing:.1em;
-      text-transform:uppercase;
-      font-size:11px;
-      color:var(--muted);
-    }
-
-    .btnbar{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
-    .btn{
-      border:1px solid rgba(216,221,224,.95);
-      background:#fff;
-      border-radius:999px;
-      padding:9px 12px;
-      cursor:pointer;
-      font-weight:800;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      font-size:11px;
-      color:#152229;
-    }
-    .btn:hover{background:rgba(11,127,108,.06)}
-    .btn.primary{
-      border-color:rgba(11,127,108,.25);
-      background:rgba(11,127,108,.08);
-    }
-
-    /* Work stack: compact list + accordion */
-    .stacklist{padding:0}
-    details.stack{border-top:1px solid rgba(216,221,224,.7)}
-    details.stack summary{
-      list-style:none;
-      cursor:pointer;
-      padding:12px 16px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      user-select:none;
-    }
-    details.stack summary::-webkit-details-marker{display:none}
-    .stack-title{display:flex; flex-direction:column; gap:4px; min-width:0;}
-    .stack-title .name{
-      font-weight:900;
-      letter-spacing:.14em;
-      text-transform:uppercase;
-      font-size:12px;
-    }
-    .stack-title .desc{
-      color:var(--muted);
-      font-size:13px;
-      font-weight:650;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      max-width:520px;
-    }
-    .stack-right{display:flex; align-items:center; gap:10px; flex:0 0 auto;}
-    .sig{
-      display:inline-flex; align-items:center; gap:8px;
-      border:1px solid var(--line);
-      border-radius:999px;
-      padding:7px 10px;
-      background:#fff;
-      font-family:var(--mono);
-      letter-spacing:.1em;
-      text-transform:uppercase;
-      font-size:10px;
-      color:var(--muted);
-    }
-    .sig i{width:9px; height:9px; border-radius:999px; background:var(--accent); display:inline-block;}
-    .sig[data-s="yellow"] i{background:var(--warn)}
-    .sig[data-s="red"] i{background:var(--danger)}
-    .chev{
-      width:10px; height:10px;
-      border-right:2px solid #2a3a41;
-      border-bottom:2px solid #2a3a41;
-      transform:rotate(-45deg);
-      opacity:.6;
-      margin-right:2px;
-      transition:transform .18s ease, opacity .18s ease;
-    }
-    details[open] .chev{transform:rotate(45deg); opacity:1}
-    .stack-body{
-      padding:0 16px 14px;
-      color:var(--muted);
-      font-size:14px;
-    }
-    .stack-body .grid2{margin-top:8px}
-    .stack-body textarea{min-height:64px}
-
-    /* Right column (Today) */
-    .day h3{
-      margin:10px 0 6px;
-      font-family:var(--mono);
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      font-size:11px;
-      color:var(--muted);
-    }
-    .day .big{font-size:16px; font-weight:750; margin:0;}
-    .help{
-      margin-top:10px;
-      padding:12px 12px;
-      border-left:4px solid rgba(11,127,108,.25);
-      background:rgba(11,127,108,.05);
-      border-radius:12px;
-      color:#2a3a41;
-      font-weight:650;
-    }
-    .dangerline{color:var(--danger); font-weight:800}
-
-    /* Archive */
-    .loglist{margin-top:10px; border-top:1px solid var(--line);}
-    .logitem{
-      padding:12px 0;
-      border-bottom:1px solid rgba(216,221,224,.6);
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-    }
-    .logitem .k{
-      flex:0 0 auto;
-      font-family:var(--mono);
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      font-size:10px;
-      color:var(--muted);
-      padding-top:2px;
-      width:72px;
-    }
-    .logitem .v{
-      color:#2a3a41;
-      font-weight:650;
-      flex:1 1 auto;
-      white-space:pre-wrap;
-    }
-
-    /* Sections */
-    .section{display:none}
-    .section.active{display:block}
+    .priority{color:var(--warn)}
+    footer{margin-top:14px;color:var(--muted);font-family:var(--mono);font-size:11px;text-align:center}
+    @media (max-width:860px){.grid{grid-template-columns:1fr}}
   </style>
 </head>
+
 <body>
-  <header class="topstrip">
-    <div class="topstrip-inner">
-      <div class="brand">
-        HAVEN CONSOLE <span class="sub">MONK MODE v2.1</span>
-      </div>
-
-      <div class="topmeta">
-        <div class="pill">
-          <span class="mono">Status</span><span class="sep">·</span>
-          <span class="dot" id="statusDot" aria-hidden="true"></span>
-          <select id="statusSelect" aria-label="Overall status" style="width:auto; padding:6px 10px; border-radius:999px;">
-            <option value="green">GREEN</option>
-            <option value="yellow">YELLOW</option>
-            <option value="red">RED</option>
-          </select>
-        </div>
-
-        <div class="pill">
-          <span class="mono">State</span><span class="sep">·</span>
-          <select id="stateSelect" aria-label="Inner state" style="width:auto; padding:6px 10px; border-radius:999px;">
-            <option value="Ignition">Ignition</option>
-            <option value="Glide">Glide</option>
-            <option value="Rest">Rest</option>
-          </select>
-        </div>
-
-        <div class="pill"><span class="mono" id="todayDate"></span></div>
-      </div>
-    </div>
-  </header>
-
-  <div class="app">
-    <aside class="side">
-      <div class="side-head">
-        <div class="title">Structure</div>
-        <div class="ver">v2.1</div>
-      </div>
-      <div class="nav" role="tablist" aria-label="Haven Console sections">
-        <button class="navbtn" data-tab="orientation" aria-selected="true">
-          <span class="name">Orientation</span><span class="hint">Now</span>
-        </button>
-        <button class="navbtn" data-tab="year" aria-selected="false">
-          <span class="name">Year</span><span class="hint">Targets</span>
-        </button>
-        <button class="navbtn" data-tab="weekly" aria-selected="false">
-          <span class="name">Weekly</span><span class="hint">Rhythm</span>
-        </button>
-        <button class="navbtn" data-tab="work" aria-selected="false">
-          <span class="name">Work</span><span class="hint">Build</span>
-        </button>
-        <button class="navbtn" data-tab="life" aria-selected="false">
-          <span class="name">Life</span><span class="hint">Home</span>
-        </button>
-        <button class="navbtn" data-tab="body" aria-selected="false">
-          <span class="name">Body</span><span class="hint">Wattage</span>
-        </button>
-        <button class="navbtn" data-tab="archive" aria-selected="false">
-          <span class="name">Archive</span><span class="hint">Log</span>
-        </button>
-      </div>
-    </aside>
-
-    <main class="main">
+  <div class="wrap">
+    <header>
       <div>
-        <!-- ORIENTATION -->
-        <section class="section card active" id="orientation">
-          <div class="cap">
-            <h2>Orientation</h2>
-            <div class="tag">Win → Exclusion → Season</div>
-          </div>
-          <div class="body">
-            <label for="seasonLine">This season is about</label>
-            <input id="seasonLine" placeholder="One sentence. Plain truth." />
-
-            <div class="grid2">
-              <div>
-                <label for="winLine">WIN — What’s Important Now</label>
-                <textarea id="winLine" placeholder="1 sentence. The center of gravity."></textarea>
-              </div>
-              <div>
-                <label for="notLine">Counter-WIN — Not pursued right now</label>
-                <textarea id="notLine" placeholder="What you are explicitly not doing."></textarea>
-              </div>
-            </div>
-
-            <div class="btnbar">
-              <button class="btn primary" id="saveOrientation">Save</button>
-              <button class="btn" id="clearOrientation">Clear</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- YEAR -->
-        <section class="section card" id="year">
-          <div class="cap">
-            <h2>Year</h2>
-            <div class="tag">Objectives · Targets · Cadence</div>
-          </div>
-          <div class="body">
-            <div class="grid2">
-              <div>
-                <label for="yearObjectives">Year objectives</label>
-                <textarea id="yearObjectives" placeholder="Bullets. Keep it clean."></textarea>
-              </div>
-              <div>
-                <label for="yearFocus">Year focus (one line)</label>
-                <input id="yearFocus" placeholder="e.g., Build the spine + paint the year." />
-                <label for="yearExclusions">Exclusions (what you won’t chase)</label>
-                <textarea id="yearExclusions" placeholder="Name it. Relief follows."></textarea>
-              </div>
-            </div>
-
-            <div class="grid2">
-              <div>
-                <label for="yearMoney">Money target</label>
-                <input id="yearMoney" placeholder="Annual number / monthly number." />
-                <label for="yearBTC">BTC / sats mission</label>
-                <input id="yearBTC" placeholder="Weekly sats plan / goal." />
-              </div>
-              <div>
-                <label for="yearOutput">Output targets</label>
-                <textarea id="yearOutput" placeholder="Paintings / studies / posts / films / episodes."></textarea>
-              </div>
-            </div>
-
-            <div class="btnbar">
-              <button class="btn primary" id="saveYear">Save Year</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- WEEKLY -->
-        <section class="section card" id="weekly">
-          <div class="cap">
-            <h2>Weekly</h2>
-            <div class="tag">Top 3 · Metrics · Plan</div>
-          </div>
-          <div class="body">
-            <label for="weekTop3">This week — top 3</label>
-            <textarea id="weekTop3" placeholder="Three priorities. Nothing else matters."></textarea>
-
-            <div class="grid2">
-              <div>
-                <label for="weekMetrics">Weekly metrics (simple)</label>
-                <textarea id="weekMetrics" placeholder="Sleep avg / workouts / deep work blocks / money deposited / paintings started."></textarea>
-              </div>
-              <div>
-                <label for="weekPlan">Weekly plan (Mon–Sun, rough)</label>
-                <textarea id="weekPlan" placeholder="Just enough structure to land reality."></textarea>
-              </div>
-            </div>
-
-            <div class="btnbar">
-              <button class="btn primary" id="saveWeekly">Save Weekly</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- WORK -->
-        <section class="section card" id="work">
-          <div class="cap">
-            <h2>Work Stack</h2>
-            <div class="tag">Purpose · Now · Risk · Signal</div>
-          </div>
-
-          <div class="stacklist">
-            <details class="stack" open data-acc="work">
-              <summary>
-                <div class="stack-title">
-                  <div class="name">Haven Systems</div>
-                  <div class="desc">Legal, financial, operational spine.</div>
-                </div>
-                <div class="stack-right">
-                  <div class="sig" id="sig-systems" data-s="green"><i></i><span>GREEN</span></div>
-                  <div class="chev" aria-hidden="true"></div>
-                </div>
-              </summary>
-              <div class="stack-body">
-                <div class="grid2">
-                  <div><label>Purpose</label><textarea id="p-systems"></textarea></div>
-                  <div><label>Now</label><textarea id="n-systems" placeholder="Next concrete action."></textarea></div>
-                </div>
-                <div class="grid2">
-                  <div><label>Risk</label><textarea id="r-systems" placeholder="What breaks if ignored."></textarea></div>
-                  <div>
-                    <label>Signal</label>
-                    <select id="s-systems">
-                      <option value="green">GREEN</option>
-                      <option value="yellow">YELLOW</option>
-                      <option value="red">RED</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </details>
-
-            <details class="stack" data-acc="work">
-              <summary>
-                <div class="stack-title">
-                  <div class="name">Haven Security</div>
-                  <div class="desc">Physical, digital, nervous-system protection.</div>
-                </div>
-                <div class="stack-right">
-                  <div class="sig" id="sig-security" data-s="green"><i></i><span>GREEN</span></div>
-                  <div class="chev" aria-hidden="true"></div>
-                </div>
-              </summary>
-              <div class="stack-body">
-                <div class="grid2">
-                  <div><label>Purpose</label><textarea id="p-security"></textarea></div>
-                  <div><label>Now</label><textarea id="n-security"></textarea></div>
-                </div>
-                <div class="grid2">
-                  <div><label>Risk</label><textarea id="r-security"></textarea></div>
-                  <div>
-                    <label>Signal</label>
-                    <select id="s-security">
-                      <option value="green">GREEN</option>
-                      <option value="yellow">YELLOW</option>
-                      <option value="red">RED</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </details>
-
-            <details class="stack" data-acc="work">
-              <summary>
-                <div class="stack-title">
-                  <div class="name">Painting</div>
-                  <div class="desc">Lemon Pie + hometown textile manufacturing process series.</div>
-                </div>
-                <div class="stack-right">
-                  <div class="sig" id="sig-painting" data-s="green"><i></i><span>GREEN</span></div>
-                  <div class="chev" aria-hidden="true"></div>
-                </div>
-              </summary>
-              <div class="stack-body">
-                <div class="grid2">
-                  <div><label>Lemon Pie — now</label><textarea id="n-lemon" placeholder="Next stroke / next study."></textarea></div>
-                  <div><label>Textile series — now</label><textarea id="n-textile" placeholder="Next process-study on canvas."></textarea></div>
-                </div>
-                <div class="grid2">
-                  <div><label>Cadence</label><textarea id="p-painting" placeholder="Weekly rhythm."></textarea></div>
-                  <div>
-                    <label>Signal</label>
-                    <select id="s-painting">
-                      <option value="green">GREEN</option>
-                      <option value="yellow">YELLOW</option>
-                      <option value="red">RED</option>
-                    </select>
-                    <label>Risk</label>
-                    <textarea id="r-painting" placeholder="What breaks if painting is neglected."></textarea>
-                  </div>
-                </div>
-              </div>
-            </details>
-
-            <details class="stack" data-acc="work">
-              <summary>
-                <div class="stack-title">
-                  <div class="name">Haven Institute</div>
-                  <div class="desc">Study + formation (listening, mentors, notes).</div>
-                </div>
-                <div class="stack-right">
-                  <div class="sig" id="sig-institute" data-s="green"><i></i><span>GREEN</span></div>
-                  <div class="chev" aria-hidden="true"></div>
-                </div>
-              </summary>
-              <div class="stack-body">
-                <div class="grid2">
-                  <div><label>Purpose</label><textarea id="p-institute"></textarea></div>
-                  <div><label>Now</label><textarea id="n-institute"></textarea></div>
-                </div>
-                <div class="grid2">
-                  <div><label>Risk</label><textarea id="r-institute"></textarea></div>
-                  <div>
-                    <label>Signal</label>
-                    <select id="s-institute">
-                      <option value="green">GREEN</option>
-                      <option value="yellow">YELLOW</option>
-                      <option value="red">RED</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </details>
-
-            <details class="stack" data-acc="work">
-              <summary>
-                <div class="stack-title">
-                  <div class="name">Curriculum</div>
-                  <div class="desc">Ignition → Glide → Create (daily practice).</div>
-                </div>
-                <div class="stack-right">
-                  <div class="sig" id="sig-curriculum" data-s="green"><i></i><span>GREEN</span></div>
-                  <div class="chev" aria-hidden="true"></div>
-                </div>
-              </summary>
-              <div class="stack-body">
-                <div class="grid2">
-                  <div><label>Purpose</label><textarea id="p-curriculum"></textarea></div>
-                  <div><label>Now</label><textarea id="n-curriculum"></textarea></div>
-                </div>
-                <div class="grid2">
-                  <div><label>Risk</label><textarea id="r-curriculum"></textarea></div>
-                  <div>
-                    <label>Signal</label>
-                    <select id="s-curriculum">
-                      <option value="green">GREEN</option>
-                      <option value="yellow">YELLOW</option>
-                      <option value="red">RED</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </details>
-          </div>
-
-          <div class="body">
-            <div class="btnbar">
-              <button class="btn primary" id="saveWork">Save Work</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- LIFE -->
-        <section class="section card" id="life">
-          <div class="cap">
-            <h2>Life</h2>
-            <div class="tag">Home · Money · People</div>
-          </div>
-          <div class="body">
-            <label for="homeLine">Home / Place</label>
-            <input id="homeLine" placeholder="Physical anchors. One sentence." />
-
-            <div class="grid2">
-              <div>
-                <label for="moneyLine">Money — one number that matters</label>
-                <input id="moneyLine" placeholder="$ / target / runway / weekly number" />
-              </div>
-              <div>
-                <label for="personLine">Relationship being tended</label>
-                <input id="personLine" placeholder="One name + one small next action." />
-              </div>
-            </div>
-
-            <div class="btnbar">
-              <button class="btn primary" id="saveLife">Save Life</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- BODY -->
-        <section class="section card" id="body">
-          <div class="cap">
-            <h2>Body</h2>
-            <div class="tag">Wattage · Sleep · Movement · Food</div>
-          </div>
-          <div class="body">
-            <div class="grid2">
-              <div><label for="sleepLine">Sleep (last night)</label><input id="sleepLine" placeholder="Hours + quality"/></div>
-              <div><label for="moveLine">Movement (today)</label><input id="moveLine" placeholder="Walk / lift / stretch"/></div>
-              <div><label for="foodLine">Food (simple)</label><input id="foodLine" placeholder="What keeps you steady"/></div>
-              <div><label for="wattLine">Wattage (0–10)</label><input id="wattLine" placeholder="e.g., 7 — clear"/></div>
-            </div>
-            <div class="help">Rule: protect wattage before you demand output.</div>
-            <div class="btnbar">
-              <button class="btn primary" id="saveBody">Save Body</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- ARCHIVE -->
-        <section class="section card" id="archive">
-          <div class="cap">
-            <h2>Archive</h2>
-            <div class="tag">Decisions · Truths · Completed</div>
-          </div>
-          <div class="body">
-            <label for="logType">Log type</label>
-            <select id="logType">
-              <option value="Decision">Decision</option>
-              <option value="Truth">Truth</option>
-              <option value="Done">Done</option>
-              <option value="Note">Note</option>
-            </select>
-
-            <label for="logText">Entry</label>
-            <textarea id="logText" placeholder="Short. Plain. No performance."></textarea>
-
-            <div class="btnbar">
-              <button class="btn primary" id="addLog">Add</button>
-              <button class="btn" id="clearLog">Clear log</button>
-            </div>
-
-            <div class="loglist" id="logList"></div>
-          </div>
-        </section>
+        <div class="kicker">HAVEN / CONSOLE</div>
+        <h1>Today — Friday, January 9, 2026</h1>
+        <div class="meta">Timezone: America/New_York • Mode: steady wattage • Law: “I do not chase. I receive.”</div>
       </div>
+      <div class="badge">
+        <div class="label">WIN (What’s Important Now)</div>
+        <div class="value">One clean admin win that protects wattage.</div>
+      </div>
+    </header>
 
-      <!-- RIGHT COLUMN: TODAY -->
-      <aside class="card day">
-        <div class="cap">
-          <h2>Today</h2>
-          <div class="tag">Build · Care · Rest</div>
+    <div class="grid">
+      <!-- LEFT -->
+      <section class="card win">
+        <h2>Top Task</h2>
+        <div class="big">Call Wells Fargo and get refunded.</div>
+        <div class="small muted">Keep it simple: call → state issue → request refund → get confirmation/reference #.</div>
+        <div class="row">
+          <div class="pill"><strong>Target outcome:</strong> refund issued + confirmation number</div>
+          <div class="pill"><strong>Script:</strong> “I’m calling about a charge. I need a refund. Can you process that now and give me a confirmation number?”</div>
         </div>
-        <div class="body">
-          <p class="big">Three acts. Then the day is complete.</p>
+      </section>
 
-          <h3>One act of building</h3>
-          <input id="dayBuild" placeholder="What lands something real?" />
-
-          <h3>One act of care</h3>
-          <input id="dayCare" placeholder="Who/what gets tended?" />
-
-          <h3>One act of rest</h3>
-          <input id="dayRest" placeholder="What restores wattage?" />
-
-          <div class="help">If you stall: clean a surface, write one paragraph, send one message.</div>
-
-          <div class="btnbar">
-            <button class="btn primary" id="saveDay">Save Day</button>
-          </div>
-
-          <div style="margin-top:12px; border-top:1px solid var(--line); padding-top:12px;">
-            <div class="mono" style="color:var(--muted);">Quick integrity check</div>
-            <div id="integrity" style="margin-top:8px;"></div>
-          </div>
+      <!-- RIGHT -->
+      <aside class="card">
+        <h2>Daily Orientation</h2>
+        <ul class="checklist">
+          <li><span class="box"></span><div><strong>Ignition → Glide → Create</strong><div class="muted">Start narrow, then widen.</div></div></li>
+          <li><span class="box"></span><div><strong>Radical presence</strong><div class="muted">No inner split, no performance.</div></div></li>
+          <li><span class="box"></span><div><strong>His mercies are new every morning</strong><div class="muted">Reset is allowed.</div></div></li>
+        </ul>
+        <div class="divider"></div>
+        <div class="small">
+          <span class="priority">Note:</span> Protect “creative wattage” today—one admin win, then back to craft.
         </div>
       </aside>
-    </main>
+
+      <!-- LEFT -->
+      <section class="card">
+        <h2>Open Loops on Your Plate</h2>
+        <ul>
+          <li>Write/shape the “Work is regulation / Flow is homeostasis” piece into <strong>333 clean, radiant words</strong> <span class="tag">Writing</span></li>
+          <li>Collect quotes/passages from heroes of the past that echo this path (incl. <strong>Cormac</strong>) <span class="tag">Study</span></li>
+          <li>Orange tree drawing: emphasize the <strong>orangeness of the leaves</strong> <span class="tag">Art</span></li>
+          <li>Prime Video / AirPlay: get <em>Call Me By Your Name</em> playing on the TV (stop the spinning / sign-in loop) <span class="tag">Tech</span></li>
+          <li>Fort Worth next weekend: keep logistics clear and light (invite sent; plan if it becomes real) <span class="tag">Life</span></li>
+        </ul>
+        <div class="divider"></div>
+        <div class="small muted">If you want this console to be strictly “action-only,” we can drop anything that isn’t a concrete task.</div>
+      </section>
+
+      <!-- RIGHT -->
+      <aside class="card">
+        <h2>Today’s Console Rules</h2>
+        <ul class="checklist">
+          <li><span class="box"></span><div><strong>One-thing bias</strong><div class="muted">Finish the refund call first.</div></div></li>
+          <li><span class="box"></span><div><strong>Signal over spectacle</strong><div class="muted">Do the real thing; skip the noise.</div></div></li>
+          <li><span class="box"></span><div><strong>Slowly, in your own way</strong><div class="muted">ゆっくりと、自分らしく</div></div></li>
+        </ul>
+      </aside>
+    </div>
+
+    <footer>
+      HAVEN SYSTEMS • Console Snapshot • “Rest protects wattage.”
+    </footer>
   </div>
-
-  <script>
-    const $ = (id)=>document.getElementById(id);
-    const storeKey = "haven_console_monk_v21";
-
-    const defaults = {
-      status:"green",
-      state:"Glide",
-      season:"",
-      win:"",
-      not:"",
-      day:{build:"", care:"", rest:""},
-      year:{ objectives:"", focus:"", exclusions:"", money:"", btc:"", output:"" },
-      weekly:{ top3:"", metrics:"", plan:"" },
-      life:{home:"", money:"", person:""},
-      body:{sleep:"", move:"", food:"", watt:""},
-      work:{
-        systems:{p:"Legal, financial, and operational spine.", n:"", r:"", s:"green"},
-        security:{p:"Protect inputs, boundaries, and nervous system.", n:"", r:"", s:"green"},
-        painting:{ cadence:"Weekly: 1–2 Lemon Pie studies + 1 textile process study.", lemonNow:"", textileNow:"", risk:"", s:"green" },
-        institute:{p:"Study that changes the nervous system.", n:"", r:"", s:"green"},
-        curriculum:{p:"Daily practice: Ignition → Glide → Create.", n:"", r:"", s:"green"},
-      },
-      log:[]
-    };
-
-    function deepMerge(base, incoming){
-      for(const k in incoming){
-        if(incoming[k] && typeof incoming[k] === "object" && !Array.isArray(incoming[k])){
-          base[k] = deepMerge(base[k] || {}, incoming[k]);
-        } else {
-          base[k] = incoming[k];
-        }
-      }
-      return base;
-    }
-    function load(){
-      try{
-        const raw = localStorage.getItem(storeKey);
-        if(!raw) return structuredClone(defaults);
-        return deepMerge(structuredClone(defaults), JSON.parse(raw));
-      }catch(e){ return structuredClone(defaults); }
-    }
-    function save(){ localStorage.setItem(storeKey, JSON.stringify(state)); }
-
-    let state = load();
-
-    // Date
-    const now = new Date();
-    const fmt = new Intl.DateTimeFormat(undefined, { weekday:"short", month:"short", day:"numeric" });
-    $("todayDate").textContent = fmt.format(now);
-
-    // Nav
-    const navBtns = document.querySelectorAll(".navbtn");
-    const sections = document.querySelectorAll(".section");
-    function showTab(id){
-      sections.forEach(s => s.classList.toggle("active", s.id === id));
-      navBtns.forEach(b => b.setAttribute("aria-selected", b.dataset.tab === id ? "true" : "false"));
-      window.scrollTo({top:0, behavior:"smooth"});
-    }
-    navBtns.forEach(b => b.addEventListener("click", ()=>showTab(b.dataset.tab)));
-
-    // Status dot
-    function paintStatusDot(v){
-      const dot = $("statusDot");
-      dot.style.background = v === "green" ? "var(--accent)" : (v === "yellow" ? "var(--warn)" : "var(--danger)");
-    }
-    function paintSig(id, v){
-      const el = $(id);
-      el.dataset.s = v;
-      el.querySelector("span").textContent = v.toUpperCase();
-    }
-
-    // Accordion: only one open in Work stack
-    document.querySelectorAll('details[data-acc="work"]').forEach(d=>{
-      d.addEventListener("toggle", ()=>{
-        if(!d.open) return;
-        document.querySelectorAll('details[data-acc="work"]').forEach(o=>{
-          if(o !== d) o.open = false;
-        });
-      });
-    });
-
-    function escapeHtml(s){
-      return String(s)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-
-    function renderLog(){
-      const box = $("logList");
-      const items = state.log || [];
-      if(!items.length){
-        box.innerHTML = `<div class="muted" style="padding:12px 0;">No entries yet.</div>`;
-        return;
-      }
-      box.innerHTML = items.map((it, idx) => `
-        <div class="logitem">
-          <div class="k">${escapeHtml(it.type || "Note")}</div>
-          <div class="v">${escapeHtml(it.text || "")}</div>
-          <button class="btn" style="flex:0 0 auto; padding:7px 10px;" data-del="${idx}">Del</button>
-        </div>
-      `).join("");
-
-      box.querySelectorAll("[data-del]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const i = Number(btn.getAttribute("data-del"));
-          state.log.splice(i,1);
-          save(); renderLog();
-        });
-      });
-    }
-
-    function renderIntegrity(){
-      const warnings = [];
-      if(!state.win.trim()) warnings.push("WIN is empty.");
-      if(!state.day.build.trim()) warnings.push("Today: Build is empty.");
-      if(state.status === "red") warnings.push("Status is RED — reduce scope, protect rest.");
-      const el = $("integrity");
-      if(!warnings.length){
-        el.innerHTML = `<div class="mono" style="color:var(--accent)">GREEN — aligned.</div>`;
-      }else{
-        el.innerHTML = warnings.map(w=>`<div class="dangerline">${escapeHtml(w)}</div>`).join("");
-      }
-    }
-
-    function hydrate(){
-      $("statusSelect").value = state.status;
-      $("stateSelect").value = state.state;
-      paintStatusDot(state.status);
-
-      $("seasonLine").value = state.season || "";
-      $("winLine").value = state.win || "";
-      $("notLine").value = state.not || "";
-
-      $("dayBuild").value = state.day.build || "";
-      $("dayCare").value = state.day.care || "";
-      $("dayRest").value = state.day.rest || "";
-
-      $("yearObjectives").value = state.year.objectives || "";
-      $("yearFocus").value = state.year.focus || "";
-      $("yearExclusions").value = state.year.exclusions || "";
-      $("yearMoney").value = state.year.money || "";
-      $("yearBTC").value = state.year.btc || "";
-      $("yearOutput").value = state.year.output || "";
-
-      $("weekTop3").value = state.weekly.top3 || "";
-      $("weekMetrics").value = state.weekly.metrics || "";
-      $("weekPlan").value = state.weekly.plan || "";
-
-      $("homeLine").value = state.life.home || "";
-      $("moneyLine").value = state.life.money || "";
-      $("personLine").value = state.life.person || "";
-
-      $("sleepLine").value = state.body.sleep || "";
-      $("moveLine").value = state.body.move || "";
-      $("foodLine").value = state.body.food || "";
-      $("wattLine").value = state.body.watt || "";
-
-      const w = state.work;
-
-      $("p-systems").value = w.systems.p || "";
-      $("n-systems").value = w.systems.n || "";
-      $("r-systems").value = w.systems.r || "";
-      $("s-systems").value = w.systems.s || "green";
-      paintSig("sig-systems", w.systems.s || "green");
-
-      $("p-security").value = w.security.p || "";
-      $("n-security").value = w.security.n || "";
-      $("r-security").value = w.security.r || "";
-      $("s-security").value = w.security.s || "green";
-      paintSig("sig-security", w.security.s || "green");
-
-      $("n-lemon").value = w.painting.lemonNow || "";
-      $("n-textile").value = w.painting.textileNow || "";
-      $("p-painting").value = w.painting.cadence || "";
-      $("r-painting").value = w.painting.risk || "";
-      $("s-painting").value = w.painting.s || "green";
-      paintSig("sig-painting", w.painting.s || "green");
-
-      $("p-institute").value = w.institute.p || "";
-      $("n-institute").value = w.institute.n || "";
-      $("r-institute").value = w.institute.r || "";
-      $("s-institute").value = w.institute.s || "green";
-      paintSig("sig-institute", w.institute.s || "green");
-
-      $("p-curriculum").value = w.curriculum.p || "";
-      $("n-curriculum").value = w.curriculum.n || "";
-      $("r-curriculum").value = w.curriculum.r || "";
-      $("s-curriculum").value = w.curriculum.s || "green";
-      paintSig("sig-curriculum", w.curriculum.s || "green");
-
-      renderLog();
-      renderIntegrity();
-    }
-
-    $("statusSelect").addEventListener("change", (e)=>{
-      state.status = e.target.value;
-      paintStatusDot(state.status);
-      save(); renderIntegrity();
-    });
-    $("stateSelect").addEventListener("change", (e)=>{
-      state.state = e.target.value;
-      save();
-    });
-
-    $("saveOrientation").addEventListener("click", ()=>{
-      state.season = $("seasonLine").value;
-      state.win = $("winLine").value;
-      state.not = $("notLine").value;
-      save(); renderIntegrity();
-    });
-    $("clearOrientation").addEventListener("click", ()=>{
-      if(!confirm("Clear Orientation fields?")) return;
-      $("seasonLine").value=""; $("winLine").value=""; $("notLine").value="";
-      state.season=""; state.win=""; state.not="";
-      save(); renderIntegrity();
-    });
-
-    $("saveYear").addEventListener("click", ()=>{
-      state.year.objectives = $("yearObjectives").value;
-      state.year.focus = $("yearFocus").value;
-      state.year.exclusions = $("yearExclusions").value;
-      state.year.money = $("yearMoney").value;
-      state.year.btc = $("yearBTC").value;
-      state.year.output = $("yearOutput").value;
-      save();
-    });
-
-    $("saveWeekly").addEventListener("click", ()=>{
-      state.weekly.top3 = $("weekTop3").value;
-      state.weekly.metrics = $("weekMetrics").value;
-      state.weekly.plan = $("weekPlan").value;
-      save();
-    });
-
-    function bindWorkSignal(selectId, sigId, setter){
-      $(selectId).addEventListener("change", (e)=>{
-        setter(e.target.value);
-        paintSig(sigId, e.target.value);
-        save(); renderIntegrity();
-      });
-    }
-
-    bindWorkSignal("s-systems","sig-systems", (v)=>state.work.systems.s=v);
-    bindWorkSignal("s-security","sig-security", (v)=>state.work.security.s=v);
-    bindWorkSignal("s-painting","sig-painting", (v)=>state.work.painting.s=v);
-    bindWorkSignal("s-institute","sig-institute", (v)=>state.work.institute.s=v);
-    bindWorkSignal("s-curriculum","sig-curriculum", (v)=>state.work.curriculum.s=v);
-
-    $("saveWork").addEventListener("click", ()=>{
-      state.work.systems.p = $("p-systems").value;
-      state.work.systems.n = $("n-systems").value;
-      state.work.systems.r = $("r-systems").value;
-
-      state.work.security.p = $("p-security").value;
-      state.work.security.n = $("n-security").value;
-      state.work.security.r = $("r-security").value;
-
-      state.work.painting.lemonNow = $("n-lemon").value;
-      state.work.painting.textileNow = $("n-textile").value;
-      state.work.painting.cadence = $("p-painting").value;
-      state.work.painting.risk = $("r-painting").value;
-
-      state.work.institute.p = $("p-institute").value;
-      state.work.institute.n = $("n-institute").value;
-      state.work.institute.r = $("r-institute").value;
-
-      state.work.curriculum.p = $("p-curriculum").value;
-      state.work.curriculum.n = $("n-curriculum").value;
-      state.work.curriculum.r = $("r-curriculum").value;
-
-      save(); renderIntegrity();
-    });
-
-    $("saveLife").addEventListener("click", ()=>{
-      state.life.home = $("homeLine").value;
-      state.life.money = $("moneyLine").value;
-      state.life.person = $("personLine").value;
-      save();
-    });
-
-    $("saveBody").addEventListener("click", ()=>{
-      state.body.sleep = $("sleepLine").value;
-      state.body.move = $("moveLine").value;
-      state.body.food = $("foodLine").value;
-      state.body.watt = $("wattLine").value;
-      save(); renderIntegrity();
-    });
-
-    $("saveDay").addEventListener("click", ()=>{
-      state.day.build = $("dayBuild").value;
-      state.day.care = $("dayCare").value;
-      state.day.rest = $("dayRest").value;
-      save(); renderIntegrity();
-    });
-
-    $("addLog").addEventListener("click", ()=>{
-      const type = $("logType").value;
-      const text = $("logText").value.trim();
-      if(!text) return;
-      state.log.unshift({type, text});
-      $("logText").value = "";
-      save(); renderLog();
-    });
-
-    $("clearLog").addEventListener("click", ()=>{
-      if(!confirm("Clear all log entries?")) return;
-      state.log = [];
-      save(); renderLog();
-    });
-
-    hydrate();
-  </script>
 </body>
 </html>
