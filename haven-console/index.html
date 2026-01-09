@@ -2,186 +2,526 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Haven Console — Jan 9, 2026</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Haven Console</title>
+  <meta name="color-scheme" content="light dark" />
   <style>
+    /* ---------- Base ---------- */
     :root{
-      --bg:#0b0f0c;
-      --panel:#0f1511;
-      --ink:#e7f2e8;
-      --muted:#a8b6ab;
-      --line:#223027;
-      --accent:#8CFFB0;
-      --warn:#FFD37A;
-      --soft:#131b16;
+      --radius: 18px;
+      --pad: 22px;
+      --max: 1040px;
+
+      --bg: #0b0f0c;
+      --bg2:#0f1511;
+      --card:#0f1511cc;
+      --line:#243027;
+      --text:#e7f2ea;
+      --muted:#a3b7aa;
+      --accent:#7ef2b6;
+      --warn:#ffd37a;
+
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --shadow: 0 10px 40px rgba(0,0,0,.35);
+      --glow: radial-gradient(900px 600px at 22% 18%, rgba(126,242,182,.12) 0%, transparent 55%),
+              radial-gradient(900px 600px at 75% 55%, rgba(255,211,122,.08) 0%, transparent 60%);
+      --noise: none;
     }
-    *{box-sizing:border-box}
+
+    /* ---------- Skins ---------- */
+    html[data-skin="monk"]{
+      --bg: #f7f5ef;
+      --bg2:#ffffff;
+      --card:#ffffffcc;
+      --line:#e6e0d4;
+      --text:#141715;
+      --muted:#5d6b62;
+      --accent:#2f6f50;
+      --warn:#8a5a12;
+      --shadow: 0 18px 50px rgba(20,23,21,.10);
+      --glow: radial-gradient(900px 600px at 22% 18%, rgba(47,111,80,.10) 0%, transparent 55%),
+              radial-gradient(900px 600px at 75% 55%, rgba(138,90,18,.08) 0%, transparent 60%);
+      --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.06'/%3E%3C/svg%3E");
+    }
+
+    html[data-skin="dark"]{
+      /* same as :root defaults */
+    }
+
+    /* ---------- Layout ---------- */
+    *{ box-sizing:border-box; }
     body{
       margin:0;
-      background:radial-gradient(1200px 800px at 30% 0%, #132018 0%, var(--bg) 55%);
-      color:var(--ink);
-      font-family:var(--sans);
+      font-family: var(--sans);
+      letter-spacing: .2px;
+      color: var(--text);
+      background:
+        var(--glow),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+      min-height:100vh;
+    }
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      pointer-events:none;
+      background-image: var(--noise);
+      mix-blend-mode:multiply;
+      opacity:.85;
+    }
+    .wrap{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 30px 18px 60px;
+      position:relative;
+    }
+    .topbar{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom: 18px;
+    }
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      padding: 18px 18px 16px;
+      border-radius: var(--radius);
+      background: var(--card);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      min-width: 320px;
+    }
+    .kicker{
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    h1{
+      margin:0;
+      font-size: 28px;
+      line-height:1.15;
+      font-weight: 680;
       letter-spacing:.2px;
     }
-    .wrap{max-width:980px;margin:0 auto;padding:28px 18px 42px}
-    header{
-      display:flex;align-items:flex-start;justify-content:space-between;gap:18px;
-      padding:16px 18px;border:1px solid var(--line);border-radius:18px;background:rgba(15,21,17,.75);
-      box-shadow:0 10px 30px rgba(0,0,0,.35);
+    .sub{
+      color: var(--muted);
+      font-size: 13px;
+      line-height:1.4;
+    }
+
+    .controls{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding: 14px 14px;
+      border-radius: var(--radius);
+      background: var(--card);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
       backdrop-filter: blur(10px);
     }
-    .kicker{font-family:var(--mono);color:var(--muted);font-size:12px}
-    h1{margin:6px 0 2px;font-size:22px;font-weight:650}
-    .meta{font-family:var(--mono);font-size:12px;color:var(--muted)}
-    .badge{
-      font-family:var(--mono);
-      border:1px solid var(--line);
-      background:linear-gradient(180deg, rgba(140,255,176,.12), rgba(140,255,176,.04));
-      padding:10px 12px;border-radius:14px;min-width:220px;
+    .label{
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space:nowrap;
     }
-    .badge .label{color:var(--muted);font-size:11px}
-    .badge .value{margin-top:6px;color:var(--accent);font-size:12px;line-height:1.35}
-    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-top:14px}
+
+    /* Toggle */
+    .toggle{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      user-select:none;
+    }
+    .switch{
+      width: 54px; height: 30px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      position:relative;
+      cursor:pointer;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.04);
+    }
+    html[data-skin="monk"] .switch{ background: rgba(0,0,0,.03); }
+    .knob{
+      width: 24px; height: 24px;
+      border-radius: 999px;
+      position:absolute; top: 50%; left: 3px;
+      transform: translateY(-50%);
+      background: var(--text);
+      opacity: .9;
+      transition: left .18s ease;
+    }
+    .switch[data-on="1"] .knob{ left: 27px; }
+    .hint{
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* Grid */
+    .grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 16px;
+      margin-top: 14px;
+    }
+    @media (max-width: 900px){
+      .topbar{ flex-direction:column; }
+      .brand{ min-width: unset; width:100%; }
+      .controls{ width:100%; justify-content:space-between; }
+      .grid{ grid-template-columns: 1fr; }
+    }
+
     .card{
-      border:1px solid var(--line);
-      background:rgba(15,21,17,.72);
-      border-radius:18px;
-      padding:14px 14px 12px;
-      box-shadow:0 10px 26px rgba(0,0,0,.25);
-      backdrop-filter: blur(8px);
+      border-radius: var(--radius);
+      background: var(--card);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      padding: var(--pad);
     }
     .card h2{
       margin:0 0 10px;
-      font-size:13px;
-      color:var(--muted);
-      font-family:var(--mono);
-      font-weight:600;
-      text-transform:uppercase;
-      letter-spacing:.12em;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 2.2px;
+      text-transform: uppercase;
+      color: var(--muted);
     }
-    .win{
-      border:1px solid rgba(140,255,176,.22);
-      background:linear-gradient(180deg, rgba(140,255,176,.10), rgba(15,21,17,.72));
+    .big{
+      font-size: 20px;
+      line-height:1.25;
+      font-weight: 650;
+      margin: 0 0 6px;
     }
-    .win .big{
-      font-size:18px;font-weight:650;margin:2px 0 2px;
+    .small{
+      font-size: 13px;
+      line-height:1.45;
+      color: var(--muted);
+      margin:0 0 14px;
     }
-    ul{margin:0;padding-left:18px}
-    li{margin:8px 0;color:var(--ink);line-height:1.35}
-    .muted{color:var(--muted)}
-    .tag{
-      display:inline-block;
-      font-family:var(--mono);
-      font-size:11px;
-      color:var(--muted);
-      border:1px solid var(--line);
-      padding:3px 8px;
-      border-radius:999px;
-      margin-left:8px;
-      background:rgba(19,27,22,.9);
-      vertical-align:middle;
-    }
-    .row{
-      display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px
-    }
+
+    .pillrow{ display:flex; gap:10px; flex-wrap:wrap; }
     .pill{
-      border:1px solid var(--line);
-      background:rgba(19,27,22,.9);
-      border-radius:14px;
-      padding:10px 12px;
-      flex:1 1 240px;
-      font-family:var(--mono);
-      font-size:12px;
-      color:var(--muted);
-      line-height:1.35;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text);
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      padding: 10px 12px;
+      border-radius: 999px;
+      max-width: 100%;
     }
-    .pill strong{color:var(--ink);font-weight:650}
-    .divider{height:1px;background:var(--line);margin:12px 0}
-    .small{font-size:12px;color:var(--muted);line-height:1.45}
-    .checklist{list-style:none;padding-left:0}
-    .checklist li{display:flex;gap:10px;align-items:flex-start}
+    html[data-skin="monk"] .pill{ background: rgba(0,0,0,.03); }
+    .pill strong{ color: var(--accent); font-weight: 700; }
+
+    .checklist{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top: 8px;
+    }
+    .item{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding: 10px 10px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius: 14px;
+    }
+    html[data-skin="monk"] .item{ background: rgba(0,0,0,.025); }
     .box{
-      width:14px;height:14px;border-radius:4px;margin-top:2px;
-      border:1px solid var(--line);background:rgba(11,15,12,.6);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
-      flex:0 0 14px;
+      width:18px;height:18px;border-radius:6px;
+      border:1px solid var(--line);
+      background: transparent;
+      flex:0 0 auto;
+      margin-top:2px;
+      cursor:pointer;
+      position:relative;
     }
-    .priority{color:var(--warn)}
-    footer{margin-top:14px;color:var(--muted);font-family:var(--mono);font-size:11px;text-align:center}
-    @media (max-width:860px){.grid{grid-template-columns:1fr}}
+    .box[data-done="1"]{
+      background: rgba(126,242,182,.18);
+      border-color: rgba(126,242,182,.45);
+    }
+    html[data-skin="monk"] .box[data-done="1"]{
+      background: rgba(47,111,80,.14);
+      border-color: rgba(47,111,80,.35);
+    }
+    .box[data-done="1"]::after{
+      content:"";
+      position:absolute;
+      left:5px; top:2px;
+      width:6px; height:10px;
+      border: 2px solid var(--accent);
+      border-top:0;border-left:0;
+      transform: rotate(45deg);
+    }
+    .itext{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .itext b{ font-weight:650; }
+    .tag{
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing:1px;
+    }
+
+    .footer{
+      margin-top: 18px;
+      text-align:center;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      opacity:.9;
+    }
+    .quote{
+      color: var(--muted);
+      text-transform:none;
+      letter-spacing:.6px;
+    }
+    a{ color: var(--accent); text-decoration: none; }
+    a:hover{ text-decoration: underline; }
   </style>
 </head>
-
 <body>
   <div class="wrap">
-    <header>
-      <div>
+    <div class="topbar">
+      <div class="brand">
         <div class="kicker">HAVEN / CONSOLE</div>
-        <h1>Today — Friday, January 9, 2026</h1>
-        <div class="meta">Timezone: America/New_York • Mode: steady wattage • Law: “I do not chase. I receive.”</div>
+        <h1 id="todayTitle">Today — </h1>
+        <div class="sub" id="todaySub">Timezone: — • Mode: steady wattage • Law: “I do not chase. I receive.”</div>
       </div>
-      <div class="badge">
-        <div class="label">WIN (What’s Important Now)</div>
-        <div class="value">One clean admin win that protects wattage.</div>
+
+      <div class="controls">
+        <div>
+          <div class="label">Skins</div>
+          <div class="hint">Dark ↔ Monk (airy)</div>
+        </div>
+
+        <div class="toggle" title="Toggle skin">
+          <div class="switch" id="skinSwitch" role="switch" aria-checked="false" tabindex="0" data-on="0">
+            <div class="knob"></div>
+          </div>
+          <div class="label" id="skinName">Dark</div>
+        </div>
       </div>
-    </header>
+    </div>
 
     <div class="grid">
-      <!-- LEFT -->
-      <section class="card win">
+      <section class="card">
         <h2>Top Task</h2>
-        <div class="big">Call Wells Fargo and get refunded.</div>
-        <div class="small muted">Keep it simple: call → state issue → request refund → get confirmation/reference #.</div>
-        <div class="row">
-          <div class="pill"><strong>Target outcome:</strong> refund issued + confirmation number</div>
-          <div class="pill"><strong>Script:</strong> “I’m calling about a charge. I need a refund. Can you process that now and give me a confirmation number?”</div>
+        <p class="big" contenteditable="true" spellcheck="false" data-key="topTask">
+          One clean admin win that protects wattage.
+        </p>
+        <p class="small" contenteditable="true" spellcheck="false" data-key="topTaskNote">
+          Keep it simple: do the one thing → close the loop → back to craft.
+        </p>
+        <div class="pillrow">
+          <div class="pill" contenteditable="true" spellcheck="false" data-key="targetOutcome">
+            <strong>Target outcome:</strong> loop closed + confirmation number
+          </div>
+          <div class="pill" contenteditable="true" spellcheck="false" data-key="script">
+            <strong>Script:</strong> “I’m calling about a charge. I need a refund. Can you process that now and give me a confirmation number?”
+          </div>
         </div>
       </section>
 
-      <!-- RIGHT -->
       <aside class="card">
         <h2>Daily Orientation</h2>
-        <ul class="checklist">
-          <li><span class="box"></span><div><strong>Ignition → Glide → Create</strong><div class="muted">Start narrow, then widen.</div></div></li>
-          <li><span class="box"></span><div><strong>Radical presence</strong><div class="muted">No inner split, no performance.</div></div></li>
-          <li><span class="box"></span><div><strong>His mercies are new every morning</strong><div class="muted">Reset is allowed.</div></div></li>
-        </ul>
-        <div class="divider"></div>
-        <div class="small">
-          <span class="priority">Note:</span> Protect “creative wattage” today—one admin win, then back to craft.
+        <div class="checklist" id="orientation">
+          <div class="item" data-id="ori1">
+            <div class="box" data-done="0" aria-label="toggle"></div>
+            <div class="itext">
+              <b>Ignition → Glide → Create</b>
+              <span class="tag">Start narrow, then widen.</span>
+            </div>
+          </div>
+          <div class="item" data-id="ori2">
+            <div class="box" data-done="0" aria-label="toggle"></div>
+            <div class="itext">
+              <b>Radical presence</b>
+              <span class="tag">No inner split, no performance.</span>
+            </div>
+          </div>
+          <div class="item" data-id="ori3">
+            <div class="box" data-done="0" aria-label="toggle"></div>
+            <div class="itext">
+              <b>Reset is allowed</b>
+              <span class="tag">Mercies new every morning.</span>
+            </div>
+          </div>
         </div>
+
+        <p class="small" style="margin-top:14px">
+          <span style="color:var(--warn); font-weight:650;">Note:</span>
+          <span contenteditable="true" spellcheck="false" data-key="note">
+            Protect “creative wattage” today—one admin win, then back to craft.
+          </span>
+        </p>
       </aside>
 
-      <!-- LEFT -->
       <section class="card">
         <h2>Open Loops on Your Plate</h2>
-        <ul>
-          <li>Write/shape the “Work is regulation / Flow is homeostasis” piece into <strong>333 clean, radiant words</strong> <span class="tag">Writing</span></li>
-          <li>Collect quotes/passages from heroes of the past that echo this path (incl. <strong>Cormac</strong>) <span class="tag">Study</span></li>
-          <li>Orange tree drawing: emphasize the <strong>orangeness of the leaves</strong> <span class="tag">Art</span></li>
-          <li>Prime Video / AirPlay: get <em>Call Me By Your Name</em> playing on the TV (stop the spinning / sign-in loop) <span class="tag">Tech</span></li>
-          <li>Fort Worth next weekend: keep logistics clear and light (invite sent; plan if it becomes real) <span class="tag">Life</span></li>
-        </ul>
-        <div class="divider"></div>
-        <div class="small muted">If you want this console to be strictly “action-only,” we can drop anything that isn’t a concrete task.</div>
+        <div class="checklist" id="loops">
+          <!-- editable loop items -->
+          <div class="item" data-id="loop1">
+            <div class="box" data-done="0" aria-label="toggle"></div>
+            <div class="itext">
+              <b contenteditable="true" spellcheck="false" data-key="loop1t">Write / shape the “Work is regulation / Flow is homeostasis” piece</b>
+              <span class="tag" contenteditable="true" spellcheck="false" data-key="loop1tag">Writing • 333 radiant words</span>
+            </div>
+          </div>
+          <div class="item" data-id="loop2">
+            <div class="box" data-done="0" aria-label="toggle"></div>
+            <div class="itext">
+              <b contenteditable="true" spellcheck="false" data-key="loop2t">Collect quotes/passages that echo this path (incl. Cormac)</b>
+              <span class="tag" contenteditable="true" spellcheck="false" data-key="loop2tag">Study</span>
+            </div>
+          </div>
+          <div class="item" data-id="loop3">
+            <div class="box" data-done="0" aria-label="toggle"></div>
+            <div class="itext">
+              <b contenteditable="true" spellcheck="false" data-key="loop3t">Orange tree drawing: emphasize the orangeness of the leaves</b>
+              <span class="tag" contenteditable="true" spellcheck="false" data-key="loop3tag">Art</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="small" style="margin-top:14px" contenteditable="true" spellcheck="false" data-key="loopsFooter">
+          If you want this console to be strictly “action-only,” we can drop anything that isn’t concrete.
+        </p>
       </section>
 
-      <!-- RIGHT -->
       <aside class="card">
         <h2>Today’s Console Rules</h2>
-        <ul class="checklist">
-          <li><span class="box"></span><div><strong>One-thing bias</strong><div class="muted">Finish the refund call first.</div></div></li>
-          <li><span class="box"></span><div><strong>Signal over spectacle</strong><div class="muted">Do the real thing; skip the noise.</div></div></li>
-          <li><span class="box"></span><div><strong>Slowly, in your own way</strong><div class="muted">ゆっくりと、自分らしく</div></div></li>
-        </ul>
+        <div class="checklist" id="rules">
+          <div class="item" data-id="rule1">
+            <div class="box" data-done="0" aria-label="toggle"></div>
+            <div class="itext">
+              <b>One-thing bias</b>
+              <span class="tag">Finish the admin loop first.</span>
+            </div>
+          </div>
+          <div class="item" data-id="rule2">
+            <div class="box" data-done="0" aria-label="toggle"></div>
+            <div class="itext">
+              <b>Signal over spectacle</b>
+              <span class="tag">Do the real thing; skip the noise.</span>
+            </div>
+          </div>
+          <div class="item" data-id="rule3">
+            <div class="box" data-done="0" aria-label="toggle"></div>
+            <div class="itext">
+              <b>Slowly, in your own way</b>
+              <span class="tag">ゆっくりと、自分らしく</span>
+            </div>
+          </div>
+        </div>
       </aside>
     </div>
 
-    <footer>
-      HAVEN SYSTEMS • Console Snapshot • “Rest protects wattage.”
-    </footer>
+    <div class="footer">
+      HAVEN SYSTEMS • <span class="quote" contenteditable="true" spellcheck="false" data-key="footerQuote">“Rest protects wattage.”</span>
+    </div>
   </div>
+
+  <script>
+    // ---------- Date header ----------
+    (function initDate(){
+      const now = new Date();
+      const fmt = new Intl.DateTimeFormat(undefined, { weekday:"long", year:"numeric", month:"long", day:"numeric" });
+      document.getElementById("todayTitle").textContent = "Today — " + fmt.format(now);
+      try{
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
+        document.getElementById("todaySub").textContent =
+          `Timezone: ${tz} • Mode: steady wattage • Law: “I do not chase. I receive.”`;
+      }catch(e){}
+    })();
+
+    // ---------- Skin toggle (dark <-> monk) ----------
+    const SKIN_KEY = "haven_skin";
+    const html = document.documentElement;
+    const sw = document.getElementById("skinSwitch");
+    const skinName = document.getElementById("skinName");
+
+    function setSkin(skin){
+      html.setAttribute("data-skin", skin);
+      const isMonk = skin === "monk";
+      sw.dataset.on = isMonk ? "1" : "0";
+      sw.setAttribute("aria-checked", String(isMonk));
+      skinName.textContent = isMonk ? "Monk" : "Dark";
+      localStorage.setItem(SKIN_KEY, skin);
+    }
+
+    const savedSkin = localStorage.getItem(SKIN_KEY) || "dark";
+    setSkin(savedSkin);
+
+    function toggleSkin(){
+      const next = (html.getAttribute("data-skin") === "monk") ? "dark" : "monk";
+      setSkin(next);
+    }
+    sw.addEventListener("click", toggleSkin);
+    sw.addEventListener("keydown", (e)=>{ if(e.key==="Enter" || e.key===" "){ e.preventDefault(); toggleSkin(); } });
+
+    // ---------- Checklist state ----------
+    const DONE_KEY = "haven_done";
+    const done = JSON.parse(localStorage.getItem(DONE_KEY) || "{}");
+
+    function applyDone(){
+      document.querySelectorAll(".item").forEach(it=>{
+        const id = it.getAttribute("data-id");
+        const box = it.querySelector(".box");
+        const v = done[id] ? "1" : "0";
+        box.dataset.done = v;
+      });
+    }
+    applyDone();
+
+    document.addEventListener("click", (e)=>{
+      const box = e.target.closest(".box");
+      if(!box) return;
+      const item = box.closest(".item");
+      const id = item.getAttribute("data-id");
+      done[id] = !done[id];
+      localStorage.setItem(DONE_KEY, JSON.stringify(done));
+      applyDone();
+    });
+
+    // ---------- Inline editable persistence ----------
+    const TEXT_KEY = "haven_text";
+    const text = JSON.parse(localStorage.getItem(TEXT_KEY) || "{}");
+
+    function loadText(){
+      document.querySelectorAll("[data-key]").forEach(el=>{
+        const k = el.getAttribute("data-key");
+        if(text[k] != null) el.textContent = text[k];
+      });
+    }
+    loadText();
+
+    let saveTimer = null;
+    document.addEventListener("input", (e)=>{
+      const el = e.target.closest("[data-key]");
+      if(!el) return;
+      const k = el.getAttribute("data-key");
+      text[k] = el.textContent;
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(()=> localStorage.setItem(TEXT_KEY, JSON.stringify(text)), 150);
+    });
+  </script>
 </body>
 </html>
