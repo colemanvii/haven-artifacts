@@ -1,5 +1,117 @@
 <!doctype html>
-<meta charset="utf-8">
-<meta http-equiv="refresh" content="0; url=./haven-console/">
-<link rel="canonical" href="./haven-console/">
-<title>Redirecting…</title>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Haven — Request an Invite</title>
+  <meta name="description" content="Haven is built one person at a time. Request an invite with a short note about what you're building and what you're protecting." />
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header class="nav">
+      <a class="brand" href="index.html" aria-label="Haven home">
+        <div class="mark" aria-hidden="true"><i></i></div>
+        <span>HAVEN</span>
+      </a>
+      <nav class="navlinks" aria-label="Primary">
+        <a data-nav href="index.html">Home</a>
+        <a data-nav href="principles.html">Principles</a>
+        <a data-nav href="creative-physics.html">Creative Physics</a>
+        <a data-nav href="333-westover.html">333 Westover</a>
+        <a data-nav class="active" href="invite.html">Invite</a>
+      </nav>
+    </header>
+
+    <main class="hero">
+      <div class="kicker"><span class="dot"></span> Human-scale access</div>
+      <h1>Request an invite.</h1>
+      <p class="sub">
+        Haven is built one person at a time. Send a short note: what you’re building, what you’re protecting, and what kind of rhythm you need.
+      </p>
+    </main>
+
+    <section>
+      <div class="split">
+        <div class="panel">
+          <h2>Send a request</h2>
+          <p class="fine">This form is static by default. It generates an email draft on submit.</p>
+
+          <form id="inviteForm">
+            <div class="row">
+              <input type="text" name="name" placeholder="Name" required />
+              <input type="email" name="email" placeholder="Email" required />
+            </div>
+            <input type="text" name="project" placeholder="What are you building?" />
+            <textarea name="note" placeholder="A short note… (What drains you? What are you trying to protect?)"></textarea>
+
+            <button class="btn primary" type="submit">Generate email draft</button>
+            <div class="fine">No feed. No spam. Human-scale only.</div>
+          </form>
+        </div>
+
+        <div class="panel">
+          <h2>Prefer email?</h2>
+          <p>Keep it simple.</p>
+          <ul class="list">
+            <li class="li"><b>Subject:</b> Haven invite</li>
+            <li class="li"><b>Include:</b> what you make • what drains you • what you’re protecting</li>
+            <li class="li"><b>Reply promise:</b> slow, considered, real</li>
+          </ul>
+
+          <hr class="hr" />
+
+          <h2>Paste-ready draft</h2>
+          <textarea id="emailDraft" readonly placeholder="Your email draft will appear here…"></textarea>
+          <div class="ctaRow" style="margin-top:12px">
+            <a class="btn" href="principles.html">Read Principles</a>
+            <a class="btn" href="creative-physics.html">Read Creative Physics</a>
+          </div>
+
+          <p class="fine" style="margin-top:12px">
+            When you’re ready, replace the mailto target in the script with your real inbox.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="foot">
+        <div>© <span id="y"></span> Haven. Infrastructure for human signal.</div>
+        <div style="display:flex; gap:14px; flex-wrap:wrap">
+          <a href="index.html">Home</a>
+          <a href="principles.html">Principles</a>
+          <a href="creative-physics.html">Creative Physics</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="assets/site.js"></script>
+  <script>
+    // Static site friendly: generates a mailto link + draft text.
+    // Replace TO_EMAIL with your real address when ready.
+    const TO_EMAIL = "hello@haven.systems"; // <-- change this
+    const form = document.getElementById("inviteForm");
+    const out = document.getElementById("emailDraft");
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const name = (data.get("name") || "").toString().trim();
+      const email = (data.get("email") || "").toString().trim();
+      const project = (data.get("project") || "").toString().trim();
+      const note = (data.get("note") || "").toString().trim();
+
+      const subject = "Haven invite";
+      const body =
+`Hi Haven,\\n\\nMy name is ${name}.\\n\\nWhat I’m building:\\n${project || "-"}\\n\\nWhat drains me / fragments my attention:\\n${note || "-"}\\n\\nWhat I’m trying to protect:\\n-\\n\\nBest,\\n${name}\\n${email}`;
+
+      out.value = body;
+
+      const mailto = `mailto:${encodeURIComponent(TO_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.location.href = mailto;
+    });
+  </script>
+</body>
+</html>
