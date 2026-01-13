@@ -73,8 +73,8 @@
     .navlinks a:hover{border-color:var(--line); color:var(--ink)}
     .navlinks a.active{
       color:var(--ink);
-      border-color:rgba(215,180,106,.22);
-      background:rgba(215,180,106,.08);
+      border-color:rgba(215,180,106,.18);
+      background:rgba(215,180,106,.06);
     }
 
     .btn{
@@ -85,11 +85,12 @@
       color:var(--ink); text-decoration:none; font-size:13px;
     }
     .btn:hover{background:rgba(109,138,116,.22)}
+    /* quieter primary */
     .btn.primary{
-      background:rgba(215,180,106,.10);
-      border-color: rgba(215,180,106,.22);
+      background:rgba(215,180,106,.07);
+      border-color: rgba(215,180,106,.18);
     }
-    .btn.primary:hover{background:rgba(215,180,106,.14)}
+    .btn.primary:hover{background:rgba(215,180,106,.10)}
 
     /* Hero */
     .hero{padding:54px 0 10px}
@@ -160,7 +161,7 @@
       margin:0;
       padding:14px 14px;
       border-radius:16px;
-      border:1px solid rgba(215,180,106,.22);
+      border:1px solid rgba(215,180,106,.18);
       background:rgba(215,180,106,.06);
       color:rgba(231,226,214,.92);
       line-height:1.7;
@@ -200,7 +201,7 @@
     .foot a{color:rgba(185,178,162,.9); text-decoration:none}
     .foot a:hover{color:var(--ink)}
 
-    /* Page sections */
+    /* SPA pages */
     .page{display:none}
     .page.active{display:block}
 
@@ -242,7 +243,7 @@
         <div class="kicker"><span class="dot"></span> Infrastructure for human signal</div>
         <h1>Protect coherence.<br/>Let the work arrive whole.</h1>
         <p class="sub">
-          Haven is not a platform, a brand, or a productivity system. It is a structure—physical, digital, and behavioral—built to reduce fragmentation so attention can condense, clarity can form, and output can carry weight.
+          Haven is not a platform, a brand, or a productivity system. It is a structure—physical, digital, and behavioral—designed to reduce fragmentation so attention condenses, clarity forms, and work carries weight.
         </p>
         <div class="ctaRow">
           <a class="btn primary" href="#invite">Request an invite</a>
@@ -327,7 +328,7 @@
       <section>
         <div class="split">
           <div class="panel">
-            <h2>Rule-of-life (private)</h2>
+            <h2>Rule-of-life</h2>
             <ul class="list">
               <li class="li"><b>Begin without input.</b> First minutes are yours.</li>
               <li class="li"><b>Work until signal fades,</b> not until time ends.</li>
@@ -475,7 +476,7 @@
 
       <section>
         <div class="panel">
-          <h2>Make your own cell (portable)</h2>
+          <h2>Make your own cell</h2>
           <div class="grid cards" style="margin-top:14px">
             <div class="card"><h3>Boundary</h3><p>One room. One desk. One tab. Clear start/stop.</p></div>
             <div class="card"><h3>Input discipline</h3><p>No-input first hour. Scheduled communication windows.</p></div>
@@ -559,15 +560,13 @@
       const hash = (location.hash || "#home").toLowerCase();
       pages.forEach(p => p.classList.toggle("active", ("#" + p.id) === hash));
       links.forEach(a => a.classList.toggle("active", (a.getAttribute("href") || "").toLowerCase() === hash));
-      // Scroll to top on page switch (feels intentional)
       window.scrollTo({ top: 0, behavior: "instant" });
     }
-
     window.addEventListener("hashchange", setActive);
     setActive();
 
     // Invite form -> draft + mailto
-    const TO_EMAIL = "hello@haven.systems"; // change this when ready
+    const TO_EMAIL = "hello@haven.systems"; // change when ready
     const form = document.getElementById("inviteForm");
     const out = document.getElementById("emailDraft");
 
