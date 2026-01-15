@@ -1,8 +1,14 @@
-# Haven Artifacts
+# haven-artifacts
 
-Small tools and experiments emerging from Haven.
+This repository holds small, finished pieces from the Haven system.
 
-Fragments, interfaces, and working objects that support
-clear thinking, slow reading, and aligned living.
+Not demos. Not experiments.  
+Artifacts.
 
-Nothing here is final.
+Each item exists because it needed to exist—not to persuade, perform, or scale.
+
+Haven is about orientation over expression.  
+Signal over spectacle.  
+Clarity earned through restraint.
+
+Ars longa, vita brevis.
