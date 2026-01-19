@@ -1,607 +1,92 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>HAVEN — Infrastructure for Human Signal</title>
-  <meta name="description" content="Haven is infrastructure for human signal—built to protect coherence, attention, and creative wattage in a fragmented world." />
-
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Haven</title>
   <style>
     :root{
-      --bg:#0b0f0d;
-      --bg2:#070a08;
-      --panel:#0f1512;
-      --ink:#e7e2d6;
-      --muted:#b9b2a2;
-      --line:rgba(231,226,214,.14);
-      --line2:rgba(231,226,214,.22);
-      --accent:#6d8a74; /* oxidized green */
-      --tung:#d7b46a;   /* dim tungsten */
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --radius: 18px;
-      --max: 1040px;
+      --bg:#0b0f0c;
+      --ink:#efe7d6;
+      --muted:rgba(239,231,214,.72);
+      --line:rgba(239,231,214,.18);
+      --accent:#d8b77b;
     }
-
     *{box-sizing:border-box}
-    html,body{height:100%}
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      background:var(--bg);
       color:var(--ink);
-      background:
-        radial-gradient(1200px 800px at 18% -10%, rgba(109,138,116,.18), transparent 60%),
-        radial-gradient(900px 600px at 90% 10%, rgba(215,180,106,.10), transparent 55%),
-        linear-gradient(180deg, var(--bg), var(--bg2) 55%, #050705);
-      letter-spacing:.2px;
-    }
-    a{color:inherit}
-    .wrap{max-width:var(--max); margin:0 auto; padding:24px}
-    .hr{height:1px; background:var(--line); border:0; margin:18px 0}
-    ::selection{background:rgba(215,180,106,.18)}
-
-    /* Nav */
-    .nav{
-      display:flex; align-items:center; justify-content:space-between;
-      padding:14px 16px;
-      border:1px solid var(--line);
-      background:rgba(15,21,18,.55);
-      backdrop-filter: blur(8px);
-      border-radius:var(--radius);
-      box-shadow: var(--shadow);
-      position:sticky; top:16px; z-index:10;
-    }
-    .brand{display:flex; gap:12px; align-items:center; text-decoration:none}
-    .mark{
-      width:34px; height:34px; border-radius:12px;
-      border:1px solid var(--line);
-      display:grid; place-items:center;
-      background:linear-gradient(180deg, rgba(109,138,116,.18), rgba(15,21,18,.4));
-    }
-    .mark i{
-      display:block; width:5px; height:18px; border-radius:10px;
-      background: linear-gradient(180deg, rgba(231,226,214,.9), rgba(109,138,116,.9));
-      box-shadow: 0 0 0 1px rgba(231,226,214,.12);
-    }
-    .brand span{font-weight:800; letter-spacing:.9px}
-
-    .navlinks{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
-    .navlinks a{
-      text-decoration:none; font-size:13px; color:var(--muted);
-      padding:8px 10px; border-radius:999px;
-      border:1px solid transparent;
-    }
-    .navlinks a:hover{border-color:var(--line); color:var(--ink)}
-    .navlinks a.active{
-      color:var(--ink);
-      border-color:rgba(215,180,106,.18);
-      background:rgba(215,180,106,.06);
-    }
-
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center; gap:10px;
-      padding:10px 14px; border-radius:999px;
-      border:1px solid var(--line2);
-      background:rgba(109,138,116,.16);
-      color:var(--ink); text-decoration:none; font-size:13px;
-    }
-    .btn:hover{background:rgba(109,138,116,.22)}
-    /* quieter primary */
-    .btn.primary{
-      background:rgba(215,180,106,.07);
-      border-color: rgba(215,180,106,.18);
-    }
-    .btn.primary:hover{background:rgba(215,180,106,.10)}
-
-    /* Hero */
-    .hero{padding:54px 0 10px}
-    .kicker{
-      display:inline-flex; align-items:center; gap:10px;
-      padding:8px 12px; border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(15,21,18,.55);
-      color:var(--muted);
-      font-size:12px;
-    }
-    .dot{width:6px; height:6px; border-radius:99px; background:var(--accent); box-shadow:0 0 0 4px rgba(109,138,116,.12)}
-    h1{
-      margin:18px 0 10px;
-      font-size: clamp(34px, 5vw, 58px);
-      line-height:1.04;
-      letter-spacing:-.9px;
-      font-weight:820;
-    }
-    .sub{
-      margin:0;
-      max-width: 72ch;
-      font-size:16px;
-      line-height:1.65;
-      color:var(--muted);
-    }
-    .ctaRow{display:flex; gap:12px; margin-top:18px; flex-wrap:wrap}
-
-    /* Layout blocks */
-    section{padding:34px 0}
-    .split{display:grid; grid-template-columns: 1.2fr .8fr; gap:18px; align-items:start}
-    .panel{
-      padding:18px;
-      border-radius:var(--radius);
-      border:1px solid var(--line);
-      background:rgba(15,21,18,.55);
-      box-shadow: var(--shadow);
-    }
-    .panel h2{margin:0 0 10px; font-size:18px; letter-spacing:.2px}
-    .panel p{margin:0; color:var(--muted); line-height:1.7; font-size:14px}
-
-    .grid{display:grid; gap:14px}
-    .cards{grid-template-columns: repeat(12, 1fr)}
-    .card{
-      grid-column: span 6;
-      padding:18px 18px 16px;
-      border-radius:var(--radius);
-      border:1px solid var(--line);
-      background:rgba(15,21,18,.55);
-      box-shadow: var(--shadow);
-    }
-    .card h3{margin:0 0 8px; font-size:15px; letter-spacing:.2px}
-    .card p{margin:0; color:var(--muted); line-height:1.65; font-size:14px}
-
-    .list{margin:14px 0 0; padding:0; list-style:none; display:grid; gap:10px}
-    .li{
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid var(--line);
-      background: rgba(11,15,13,.55);
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.55;
-    }
-    .li b{color:var(--ink); font-weight:800}
-
-    blockquote{
-      margin:0;
-      padding:14px 14px;
-      border-radius:16px;
-      border:1px solid rgba(215,180,106,.18);
-      background:rgba(215,180,106,.06);
-      color:rgba(231,226,214,.92);
       line-height:1.7;
     }
-
-    .kbd{
-      font-size:12px;
-      padding:2px 8px;
-      border-radius:999px;
+    .wrap{max-width:820px;margin:0 auto;padding:96px 24px}
+    header{margin-bottom:48px}
+    .kicker{font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+    h1{font-size:40px;margin:12px 0 0;letter-spacing:.2px}
+    p{font-size:19px;color:var(--muted);margin:0 0 18px}
+    .card{
       border:1px solid var(--line);
-      background:rgba(11,15,13,.55);
-      color:rgba(185,178,162,.9);
+      border-radius:22px;
+      padding:44px 40px;
+      background:rgba(255,255,255,.03);
     }
-
-    /* Invite */
-    form{display:grid; gap:10px; margin-top:14px}
-    .row{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
-    input, textarea{
-      width:100%;
-      padding:12px 12px;
-      border-radius:14px;
+    .divider{height:1px;background:var(--line);margin:30px 0}
+    .actions{margin-top:18px}
+    a.btn{
+      display:inline-block;
+      padding:16px 22px;
+      border-radius:16px;
+      text-decoration:none;
+      font-weight:700;
+      letter-spacing:.2px;
       border:1px solid var(--line);
-      background: rgba(11,15,13,.55);
       color:var(--ink);
-      outline:none;
+      margin-right:10px;
     }
-    textarea{min-height:130px; resize:vertical}
-    input::placeholder, textarea::placeholder{color: rgba(185,178,162,.6)}
-    .fine{font-size:12px; color:rgba(185,178,162,.75)}
-
-    /* Footer */
-    footer{padding:26px 0 40px; color:rgba(185,178,162,.75)}
-    .foot{
-      display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap;
-      border-top:1px solid var(--line); padding-top:18px
+    a.btnPrimary{
+      background:var(--accent);
+      color:#0b0f0c;
+      border-color:transparent;
     }
-    .foot a{color:rgba(185,178,162,.9); text-decoration:none}
-    .foot a:hover{color:var(--ink)}
-
-    /* SPA pages */
-    .page{display:none}
-    .page.active{display:block}
-
-    @media (max-width: 880px){
-      .split{grid-template-columns: 1fr}
-      .card{grid-column: span 12}
-      .row{grid-template-columns: 1fr}
-    }
-
-    @media (prefers-reduced-motion: no-preference){
-      .mark i{animation: pulse 5.5s ease-in-out infinite}
-      .kicker{animation: breathe 8s ease-in-out infinite}
-      @keyframes pulse{0%,100%{opacity:.85; transform: translateY(0)}50%{opacity:1; transform: translateY(-1px)}}
-      @keyframes breathe{0%,100%{transform: translateY(0)}50%{transform: translateY(-1px)}}
-    }
+    a.btn:hover{border-color:rgba(239,231,214,.3)}
+    a.btnPrimary:hover{opacity:.95}
+    footer{margin-top:26px;font-size:13px;color:var(--muted)}
   </style>
 </head>
-
 <body>
-  <div class="wrap">
-    <header class="nav">
-      <a class="brand" href="#home" aria-label="Haven home">
-        <div class="mark" aria-hidden="true"><i></i></div>
-        <span>HAVEN</span>
-      </a>
-
-      <nav class="navlinks" aria-label="Primary">
-        <a data-route href="#home">Home</a>
-        <a data-route href="#principles">Principles</a>
-        <a data-route href="#creative-physics">Creative Physics</a>
-        <a data-route href="#333-westover">333 Westover</a>
-        <a class="btn primary" data-route href="#invite">Request an invite →</a>
-      </nav>
+  <main class="wrap">
+    <header>
+      <div class="kicker">Haven</div>
+      <h1>A place for alignment</h1>
     </header>
 
-    <!-- HOME -->
-    <main id="home" class="page active">
-      <div class="hero">
-        <div class="kicker"><span class="dot"></span> Infrastructure for human signal</div>
-        <h1>Protect coherence.<br/>Let the work arrive whole.</h1>
-        <p class="sub">
-          Haven is not a platform, a brand, or a productivity system. It is a structure—physical, digital, and behavioral—designed to reduce fragmentation so attention condenses, clarity forms, and work carries weight.
-        </p>
-        <div class="ctaRow">
-          <a class="btn primary" href="#invite">Request an invite</a>
-          <a class="btn" href="#principles">Read the principles</a>
-          <span class="kbd">Ignition → Glide → Create</span>
-        </div>
+    <section class="card">
+      <p>
+        Haven is a quiet institution devoted to coherence—
+        the alignment of inner life, daily action, and long-term direction.
+      </p>
+      <p>
+        It is built slowly, without spectacle, for people who sense that
+        modern life moves too fast to be inhabited.
+      </p>
+
+      <div class="divider"></div>
+
+      <p>
+        This is not a program or a platform.
+        It is an orientation.
+      </p>
+
+      <div class="actions">
+        <a class="btn" href="/threshold/">Read the Threshold</a>
+        <a class="btn btnPrimary" href="/contribute/">Contribute</a>
       </div>
 
-      <section>
-        <div class="split">
-          <div class="panel">
-            <h2>What Haven is</h2>
-            <p>
-              A modern container for interior life—designed for creators, builders, and sensitive operators whose best work requires quiet authority, steady rhythm, and protected attention.
-            </p>
-            <ul class="list">
-              <li class="li"><b>Containment:</b> boundaries that stop attention from leaking.</li>
-              <li class="li"><b>Rhythm:</b> a rule-of-life that restores wattage.</li>
-              <li class="li"><b>Signal:</b> work that favors heat over volume.</li>
-              <li class="li"><b>Human spark:</b> software that stays warm, not sterile.</li>
-            </ul>
-          </div>
-
-          <div class="panel">
-            <h2>What Haven is not</h2>
-            <ul class="list">
-              <li class="li">Not a social feed.</li>
-              <li class="li">Not a hustle machine.</li>
-              <li class="li">Not a dopamine loop.</li>
-              <li class="li">Not optimization for its own sake.</li>
-            </ul>
-            <p style="margin-top:12px">Haven is built for people who would rather be undivided than visible.</p>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <div class="panel">
-          <h2>Why it exists</h2>
-          <p>
-            Modern life fragments attention faster than meaning can form. Haven slows the environment around a person so decisions, relationships, and work emerge from coherence rather than urgency.
-          </p>
-          <hr class="hr" />
-          <blockquote>
-            <b>The Core Law:</b> What is rushed fractures. What is protected coheres. What coheres carries weight.
-          </blockquote>
-        </div>
-
-        <div class="grid cards" style="margin-top:14px">
-          <div class="card"><h3>Signal-not-spectacle</h3><p>We don’t inflate. We refine. Empty space is functional; restraint is a feature.</p></div>
-          <div class="card"><h3>Rest protects wattage</h3><p>Rest keeps the ember alive. Without rest, presence collapses and intuition dims.</p></div>
-          <div class="card"><h3>Orientation over expression</h3><p>We build systems that orient the inner life—meaning arrives as a byproduct.</p></div>
-          <div class="card"><h3>Clarity without contempt</h3><p>We see patterns without superiority. We choose reality over coping. We tend our own ground.</p></div>
-        </div>
-      </section>
-    </main>
-
-    <!-- PRINCIPLES -->
-    <main id="principles" class="page">
-      <div class="hero">
-        <div class="kicker"><span class="dot"></span> Non-negotiables</div>
-        <h1>Principles.</h1>
-        <p class="sub">Haven works when the container stays clean. These are the guardrails.</p>
-      </div>
-
-      <section>
-        <div class="panel">
-          <h2>The Core Law</h2>
-          <blockquote>What is rushed fractures. What is protected coheres. What coheres carries weight.</blockquote>
-        </div>
-
-        <div class="grid cards" style="margin-top:14px">
-          <div class="card"><h3>Coherence over exposure</h3><p>Visibility is optional. Integrity is not.</p></div>
-          <div class="card"><h3>Heat over volume</h3><p>Quiet authority travels farther than noise. We refine until it carries weight.</p></div>
-          <div class="card"><h3>Constraints are care</h3><p>Boundaries are how signal survives. Less is fidelity.</p></div>
-          <div class="card"><h3>Rest protects wattage</h3><p>Rest keeps the ember alive. Without rest, presence collapses.</p></div>
-          <div class="card"><h3>Orientation over expression</h3><p>We build objects and systems that orient the inner life.</p></div>
-          <div class="card"><h3>Human spark</h3><p>Tech should feel warm, lived-in, and real. No sterile perfection.</p></div>
-        </div>
-      </section>
-
-      <section>
-        <div class="split">
-          <div class="panel">
-            <h2>Rule-of-life</h2>
-            <ul class="list">
-              <li class="li"><b>Begin without input.</b> First minutes are yours.</li>
-              <li class="li"><b>Work until signal fades,</b> not until time ends.</li>
-              <li class="li"><b>Stop before depletion.</b> Finish with embers, not ash.</li>
-              <li class="li"><b>Silence is a tool.</b> Use it daily.</li>
-              <li class="li"><b>One person at a time.</b> Earned scale lasts.</li>
-            </ul>
-          </div>
-
-          <div class="panel">
-            <h2>Diagnostic use</h2>
-            <ul class="list">
-              <li class="li"><b>If you feel scattered:</b> add boundary.</li>
-              <li class="li"><b>If you feel rushed:</b> reduce commitments.</li>
-              <li class="li"><b>If you feel stuck:</b> seek glide, then create.</li>
-            </ul>
-            <div class="ctaRow" style="margin-top:14px">
-              <a class="btn" href="#creative-physics">Read Creative Physics</a>
-              <a class="btn primary" href="#invite">Request an invite</a>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <!-- CREATIVE PHYSICS -->
-    <main id="creative-physics" class="page">
-      <div class="hero">
-        <div class="kicker"><span class="dot"></span> Mechanics of the inner life</div>
-        <h1>Creative Physics.</h1>
-        <p class="sub">A practical vocabulary for what happens inside a creator. When you can name it, you can protect it.</p>
-        <div class="ctaRow">
-          <span class="kbd">Ignition → Glide → Create</span>
-          <span class="kbd">Rest protects wattage</span>
-        </div>
-      </div>
-
-      <section>
-        <div class="split">
-          <div class="panel">
-            <h2>The working model</h2>
-            <ul class="list">
-              <li class="li"><b>Wattage:</b> inner voltage—clarity + energy when aligned.</li>
-              <li class="li"><b>Creative pressure:</b> accumulated meaning that must be expressed.</li>
-              <li class="li"><b>Ignition:</b> narrowing of focus—decisive start.</li>
-              <li class="li"><b>Glide:</b> spacious awareness—low tension, high perception.</li>
-              <li class="li"><b>Aligned fire:</b> heat without chaos—coherent intensity.</li>
-              <li class="li"><b>Rest:</b> the reset that keeps signal clean.</li>
-            </ul>
-          </div>
-
-          <div class="panel">
-            <h2>The Core Law</h2>
-            <blockquote>What is rushed fractures. What is protected coheres. What coheres carries weight.</blockquote>
-            <hr class="hr" />
-            <p>Creative Physics is how we keep that law true in daily life—through timing, boundaries, and rhythm.</p>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <div class="panel">
-          <h2>Diagnostics</h2>
-          <div class="grid cards" style="margin-top:14px">
-            <div class="card"><h3>Scattered</h3><p><b>Likely:</b> leakage (too much input). <br/><b>Do:</b> add boundary, reduce tabs, single-task.</p></div>
-            <div class="card"><h3>Flat / numb</h3><p><b>Likely:</b> overload or depletion. <br/><b>Do:</b> rest, walk, no-input hour, re-enter glide.</p></div>
-            <div class="card"><h3>Restless</h3><p><b>Likely:</b> pressure without outlet. <br/><b>Do:</b> quick ignition: 20 minutes, make one thing.</p></div>
-            <div class="card"><h3>Blocked</h3><p><b>Likely:</b> forced ignition. <br/><b>Do:</b> stop pushing; widen into glide; lower stakes.</p></div>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <div class="split">
-          <div class="panel">
-            <h2>Protocol</h2>
-            <ul class="list">
-              <li class="li"><b>1) Seal the room:</b> no-input start.</li>
-              <li class="li"><b>2) Find glide:</b> stillness, walk, quiet.</li>
-              <li class="li"><b>3) Ignite:</b> choose the smallest true task.</li>
-              <li class="li"><b>4) Create:</b> work until signal fades.</li>
-              <li class="li"><b>5) Stop early:</b> leave embers for tomorrow.</li>
-            </ul>
-          </div>
-          <div class="panel">
-            <h2>Next</h2>
-            <p>Creative Physics needs a place to live. That place is a cell—physical or digital—where coherence can accumulate.</p>
-            <div class="ctaRow" style="margin-top:14px">
-              <a class="btn" href="#333-westover">Read 333 Westover</a>
-              <a class="btn primary" href="#invite">Request an invite</a>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <!-- 333 WESTOVER -->
-    <main id="333-westover" class="page">
-      <div class="hero">
-        <div class="kicker"><span class="dot"></span> The founding cell</div>
-        <h1>333 Westover.</h1>
-        <p class="sub">Not a retreat—an environment where signal can hold. Where pressure condenses instead of dispersing.</p>
-      </div>
-
-      <section>
-        <div class="panel">
-          <h2>Why it matters</h2>
-          <p>
-            A cell is a boundary that protects interior life long enough for something real to form. 333 Westover functioned the same way—quiet, containment, rhythm, and a stable place for meaning to accumulate.
-          </p>
-          <hr class="hr" />
-          <blockquote>
-            In Haven’s history, 333 Westover is the first true cell—the place where attention stopped leaking and Creative Physics became lived practice.
-          </blockquote>
-        </div>
-      </section>
-
-      <section>
-        <div class="split">
-          <div class="panel">
-            <h2>The conditions</h2>
-            <ul class="list">
-              <li class="li"><b>Small enough</b> to focus.</li>
-              <li class="li"><b>Quiet enough</b> to listen.</li>
-              <li class="li"><b>Stable enough</b> to let time work.</li>
-              <li class="li"><b>Simple enough</b> to reduce decisions.</li>
-              <li class="li"><b>Warm enough</b> to keep the human spark.</li>
-            </ul>
-          </div>
-          <div class="panel">
-            <h2>What a cell does</h2>
-            <ul class="list">
-              <li class="li"><b>Stops leakage:</b> input is controlled.</li>
-              <li class="li"><b>Builds pressure:</b> meaning accumulates.</li>
-              <li class="li"><b>Clarifies signal:</b> the unnecessary falls away.</li>
-              <li class="li"><b>Enforces rhythm:</b> work and rest become trustworthy.</li>
-            </ul>
-            <div class="ctaRow" style="margin-top:14px">
-              <a class="btn" href="#creative-physics">Creative Physics</a>
-              <a class="btn primary" href="#invite">Request an invite</a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <div class="panel">
-          <h2>Make your own cell</h2>
-          <div class="grid cards" style="margin-top:14px">
-            <div class="card"><h3>Boundary</h3><p>One room. One desk. One tab. Clear start/stop.</p></div>
-            <div class="card"><h3>Input discipline</h3><p>No-input first hour. Scheduled communication windows.</p></div>
-            <div class="card"><h3>Rhythm</h3><p>Work until signal fades. Stop before depletion. Rest daily.</p></div>
-            <div class="card"><h3>Signal artifacts</h3><p>Make one thing per day that can hold weight.</p></div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <!-- INVITE -->
-    <main id="invite" class="page">
-      <div class="hero">
-        <div class="kicker"><span class="dot"></span> Human-scale access</div>
-        <h1>Request an invite.</h1>
-        <p class="sub">Haven is built one person at a time. Send a short note: what you’re building, what you’re protecting, and what kind of rhythm you need.</p>
-      </div>
-
-      <section>
-        <div class="split">
-          <div class="panel">
-            <h2>Send a request</h2>
-            <p class="fine">Static site friendly. This generates an email draft.</p>
-
-            <form id="inviteForm">
-              <div class="row">
-                <input type="text" name="name" placeholder="Name" required />
-                <input type="email" name="email" placeholder="Email" required />
-              </div>
-              <input type="text" name="project" placeholder="What are you building?" />
-              <textarea name="note" placeholder="A short note… (What drains you? What are you trying to protect?)"></textarea>
-
-              <button class="btn primary" type="submit">Generate email draft</button>
-              <div class="fine">No feed. No spam. Human-scale only.</div>
-            </form>
-          </div>
-
-          <div class="panel">
-            <h2>Paste-ready draft</h2>
-            <textarea id="emailDraft" readonly placeholder="Your email draft will appear here…"></textarea>
-
-            <hr class="hr" />
-
-            <h2>Prefer email?</h2>
-            <ul class="list">
-              <li class="li"><b>Subject:</b> Haven invite</li>
-              <li class="li"><b>Include:</b> what you make • what drains you • what you’re protecting</li>
-              <li class="li"><b>Reply promise:</b> slow, considered, real</li>
-            </ul>
-
-            <div class="ctaRow" style="margin-top:14px">
-              <a class="btn" href="#principles">Read Principles</a>
-              <a class="btn" href="#creative-physics">Read Creative Physics</a>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer>
-      <div class="foot">
-        <div>© <span id="y"></span> Haven. Infrastructure for human signal.</div>
-        <div style="display:flex; gap:14px; flex-wrap:wrap">
-          <a href="#home">Home</a>
-          <a href="#principles">Principles</a>
-          <a href="#invite">Invite</a>
-        </div>
-      </div>
-    </footer>
-  </div>
-
-  <script>
-    // Year
-    document.getElementById("y").textContent = new Date().getFullYear();
-
-    // Tiny router: show one section per hash route
-    const pages = Array.from(document.querySelectorAll(".page"));
-    const links = Array.from(document.querySelectorAll("[data-route]"));
-
-    function setActive() {
-      const hash = (location.hash || "#home").toLowerCase();
-      pages.forEach(p => p.classList.toggle("active", ("#" + p.id) === hash));
-      links.forEach(a => a.classList.toggle("active", (a.getAttribute("href") || "").toLowerCase() === hash));
-      window.scrollTo({ top: 0, behavior: "instant" });
-    }
-    window.addEventListener("hashchange", setActive);
-    setActive();
-
-    // Invite form -> draft + mailto
-    const TO_EMAIL = "hello@haven.systems"; // change when ready
-    const form = document.getElementById("inviteForm");
-    const out = document.getElementById("emailDraft");
-
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const data = new FormData(form);
-      const name = (data.get("name") || "").toString().trim();
-      const email = (data.get("email") || "").toString().trim();
-      const project = (data.get("project") || "").toString().trim();
-      const note = (data.get("note") || "").toString().trim();
-
-      const subject = "Haven invite";
-      const body =
-`Hi Haven,
-
-My name is ${name}.
-
-What I’m building:
-${project || "-"}
-
-What drains me / fragments my attention:
-${note || "-"}
-
-What I’m trying to protect:
--
-
-Best,
-${name}
-${email}`;
-
-      out.value = body;
-
-      const mailto = `mailto:${encodeURIComponent(TO_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      window.location.href = mailto;
-    });
-  </script>
+      <footer>
+        If nothing here resonates, leave freely. If something does, take your time.
+      </footer>
+    </section>
+  </main>
 </body>
 </html>
