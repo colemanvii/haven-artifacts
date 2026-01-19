@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contribute — Haven</title>
+  <style>
+    :root{
+      --bg:#0b0f0c;
+      --ink:#efe7d6;
+      --accent:#d8b77b;
+      --muted:rgba(239,231,214,.65);
+      --line:rgba(239,231,214,.18);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      background:var(--bg);
+      color:var(--ink);
+      line-height:1.6;
+    }
+    .wrap{
+      max-width:760px;
+      margin:0 auto;
+      padding:72px 24px;
+    }
+    .card{
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:40px 36px;
+      background:rgba(255,255,255,.03);
+    }
+    h1{
+      font-size:32px;
+      margin:0 0 18px;
+      letter-spacing:.2px;
+    }
+    p{
+      margin:0 0 18px;
+      font-size:18px;
+      color:var(--muted);
+    }
+    .divider{
+      height:1px;
+      background:var(--line);
+      margin:28px 0;
+    }
+    .btn{
+      display:inline-block;
+      padding:16px 22px;
+      border-radius:16px;
+      background:var(--accent);
+      color:#0b0f0c;
+      text-decoration:none;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+    .btn:hover{opacity:.95}
+    .note{
+      margin-top:16px;
+      font-size:14px;
+      color:var(--muted);
+    }
+    footer{
+      margin-top:36px;
+      font-size:13px;
+      color:var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <h1>Contribute</h1>
+      <p>
+        Haven exists to help people live slower, truer, and more intact.
+        It is built quietly, without spectacle, and sustained by those who feel the weight of that work.
+      </p>
+      <p>
+        If you feel led to support Haven, you’re welcome to contribute.
+        There is no pressure here—only invitation.
+      </p>
+      <div class="divider"></div>
+      <!-- Replace the link below with your Stripe Payment Link -->
+      <a class="btn" href="YOUR_STRIPE_PAYMENT_LINK">Contribute via Stripe</a>
+      <div class="note">No tiers. No promises. Just a quiet yes.</div>
+    </section>
+    <footer>
+      Haven is an independent institution. Contributions support ongoing work, stewardship, and development.
+    </footer>
+  </main>
+</body>
+</html>
